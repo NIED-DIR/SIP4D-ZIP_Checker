@@ -1,0 +1,165 @@
+{
+    "members": [
+        {
+            "key": "version",
+            "type": "String",
+            "necessary": true
+        },
+        {
+            "key": "num_column",
+            "type": "Integer",
+            "necessary": true,
+            "min_value": 1
+        },
+        {
+            "key" : "columns",
+            "type" : "ArrayOfObject",
+            "necessary" : true,
+            "count_members" : "num_column",
+            "members" : [
+                {
+                    "key" : "name",
+                    "type" : "String",
+                    "necessary" : true
+                },
+                {
+                    "key" : "jname",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "connid",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "show",
+                    "type" : "Bool",
+                    "necessary" : true
+                },
+                {
+                    "key" : "description",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "type",
+                    "type" : "String",
+                    "necessary" : false,
+                    "values" : ["String", "Integer", "Double", "List", "Datetime"]
+                },
+                {
+                    "key" : "num_key",
+                    "type" : "Integer",
+                    "necessary" : false
+                },
+                {
+                    "key" : "key_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                },
+                {
+                    "key" : "value_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                },
+                {
+                    "key" : "conn_attr_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                }
+            ],
+            "exist_members" : [
+                {
+                    "keys": ["num_key","key_list","value_list"],
+                    "ifkey": "type",
+                    "ifvalue" : "List"
+                },
+                {
+                    "keys" : ["connid","name"],
+                    "value" : "estab"
+                },
+                {
+                    "keys" : ["connid","name"],
+                    "value" : "name"
+                },
+                {
+                    "keys" : ["connid","name"],
+                    "value" : "cityname"
+                }
+            ]
+        }
+    ],
+    "properties_value" : [
+        {
+            "connid" : "id",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "citycode",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "josetu",
+            "type" : "List",
+            "necessary" : false,
+            "values" : ["常設", "臨時"]
+        },
+        {
+            "connid" : "estab",
+            "type" : "List",
+            "necessary" : true,
+            "values" : ["閉鎖", "受入不可", "開設", "不明", "その他"]
+        },
+        {
+            "connid" : "name",
+            "type" : "String",
+            "necessary" : true
+        },
+        {
+            "connid" : "namekana",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "phoneno",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "cityname",
+            "type" : "String",
+            "necessary" : true
+        },
+        {
+            "connid" : "address",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "starttime",
+            "type" : "Datetime",
+            "necessary" : false
+        },
+        {
+            "connid" : "endtime",
+            "type" : "Datetime",
+            "necessary" : false
+        },
+        {
+            "connid" : "openhour",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "note",
+            "type" : "String",
+            "necessary" : false
+        }
+    ]
+}

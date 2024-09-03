@@ -1,0 +1,96 @@
+{
+    "members": [
+        {
+            "key": "num_class",
+            "type": "Integer",
+            "necessary" : true
+        },
+        {
+            "key": "type",
+            "type": "String",
+            "necessary" : true,
+            "values": ["point", "line", "polygon"]
+        },
+        {
+            "key": "note",
+            "type": "String",
+            "necessary" : false
+        },
+        {
+            "key": "column",
+            "type": "String",
+            "necessary" : false
+        },
+        {
+            "key": "minvalue",
+            "type": "Number",
+            "necessary" : false
+        },
+        {
+            "key" : "classes",
+            "type" : "ArrayOfObject",
+            "necessary" : true,
+            "count_members" : "num_class",
+            "members" : [
+                {
+                    "key" : "title",
+                    "type" : "String",
+                    "necessary" : true
+                },
+                {
+                    "key" : "value",
+                    "type" : "StrNum",
+                    "necessary" : false
+                },
+                {
+                    "key" : "point_type",
+                    "type" : "String",
+                    "necessary" : false,
+                    "values" : ["icon", "circle"]
+                },
+                {
+                    "key" : "icon",
+                    "type" : "String",
+                    "necessary" : false,
+                    "file_exists" : true
+                },
+                {
+                    "key": "color",
+                    "type": "String",
+                    "necessary": false,
+                    "string_formats" : ["^[0-9a-fA-F]{6}$"]
+                },
+                {
+                    "key": "stroke",
+                    "type": "Number",
+                    "necessary": false
+                },
+                {
+                    "key": "stroke_opacity",
+                    "type": "Number",
+                    "necessary": false,
+                    "min_value": 0,
+                    "max_value": 1
+                },
+                {
+                    "key": "fill",
+                    "type": "String",
+                    "necessary": false,
+                    "string_formats" : ["^[0-9a-fA-F]{6}$"]
+                },
+                {
+                    "key": "fill_opacity",
+                    "type": "Number",
+                    "necessary": false,
+                    "min_value": 0,
+                    "max_value": 1
+                },
+                {
+                    "key": "size",
+                    "type": "Integer",
+                    "necessary": false
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "members" : [
+        {
+            "key": "format",
+            "type": "String",
+            "necessary": true,
+            "values": ["SIP4D-ZIP"]
+        },
+        {
+            "key": "version",
+            "type": "String",
+            "necessary": true,
+            "values": ["1","1.1","2.0"]
+        },
+        {
+            "key": "code",
+            "type": "String",
+            "necessary": true,
+            "string_formats": ["^\\d{2}-\\d{3}-\\d{2}$"]
+        },
+        {
+            "key": "payload_type",
+            "type": "String",
+            "necessary": false
+        }
+    ]
+}

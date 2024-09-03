@@ -1,0 +1,239 @@
+{
+    "members": [
+        {
+            "key": "version",
+            "type": "String",
+            "necessary": true
+        },
+        {
+            "key": "num_column",
+            "type": "Integer",
+            "necessary": true,
+            "min_value": 1
+        },
+        {
+            "key" : "columns",
+            "type" : "ArrayOfObject",
+            "necessary" : true,
+            "count_members" : "num_column",
+            "members" : [
+                {
+                    "key" : "name",
+                    "type" : "String",
+                    "necessary" : true
+                },
+                {
+                    "key" : "jname",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "connid",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "show",
+                    "type" : "Bool",
+                    "necessary" : true
+                },
+                {
+                    "key" : "description",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "type",
+                    "type" : "String",
+                    "necessary" : false,
+                    "values" : ["String", "Integer", "Double", "List", "Datetime"]
+                },
+                {
+                    "key" : "num_key",
+                    "type" : "Integer",
+                    "necessary" : false
+                },
+                {
+                    "key" : "key_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                },
+                {
+                    "key" : "value_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                },
+                {
+                    "key" : "conn_attr_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                }
+            ],
+            "exist_members" : [
+                {
+                    "keys": ["num_key","key_list","value_list"],
+                    "ifkey": "type",
+                    "ifvalue" : "List"
+                },
+                {
+                    "keys": ["connid","name"],
+                    "value": "eststts"
+                },
+                {
+                    "keys": ["connid","name"],
+                    "value": "name"
+                },
+                {
+                    "keys": ["connid","name"],
+                    "value": "cityname"
+                }
+            ]
+       }
+    ],
+    "properties_value" : [
+        {
+            "connid" : "id",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "citycode",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "eststts",
+            "type" : "String",
+            "values" : ["未開設","開設","閉鎖","常設","不明","その他"],
+            "necessary" : true
+        },
+        {
+            "connid" : "type",
+            "type" : "String",
+            "values" : ["避難所","臨時避難所","福祉避難所","不明"],
+            "necessary" : false
+        },
+        {
+            "connid" : "division",
+            "type" : "String",
+            "values" : ["指定避難所","指定緊急避難場所兼避難所","指定緊急避難場所","指定なし"],
+            "necessary" : false
+        },
+        {
+            "connid" : "name",
+            "type" : "String",
+            "necessary" : true
+        },
+        {
+            "connid" : "namekana",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "phoneno",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "cityname",
+            "type" : "String",
+            "necessary" : true
+        },
+        {
+            "connid" : "address",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "height",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "remarks",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "spnotes",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "area",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "multiple",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "trucksize",
+            "type" : "String",
+            "values" : ["軽自動車","2tトラック","4tトラック","10tトラック","その他","不明"],
+            "necessary" : false
+        },
+        {
+            "connid" : "capacity",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "reason",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "crowdstts",
+            "type" : "String",
+            "values" : ["空き","混雑","定員一杯","不明"],
+            "necessary" : false
+        },
+        {
+            "connid" : "evacueeno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "sevacueeno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "houseno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "shouseno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "thouseno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "starttime",
+            "type" : "Datetime",
+            "necessary" : false
+        },
+        {
+            "connid" : "endtime",
+            "type" : "Datetime",
+            "necessary" : false
+        },
+        {
+            "connid" : "note",
+            "type" : "String",
+            "necessary" : false
+        }
+    ]
+
+}

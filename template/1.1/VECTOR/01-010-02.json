@@ -1,0 +1,154 @@
+{
+    "members": [
+        {
+            "key": "version",
+            "type": "String",
+            "necessary": true
+        },
+        {
+            "key": "code",
+            "type": "String",
+            "necessary": true,
+            "values": ["01-010-02"]
+        },
+        {
+            "key": "num_column",
+            "type": "Integer",
+            "necessary": true,
+            "min_value": 1
+        },
+        {
+            "key" : "columns",
+            "type" : "ArrayOfObject",
+            "necessary" : true,
+            "count_members" : "num_column",
+            "members" : [
+                {
+                    "key" : "name",
+                    "type" : "String",
+                    "necessary" : true
+                },
+                {
+                    "key" : "jname",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "connid",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "show",
+                    "type" : "Bool",
+                    "necessary" : true
+                },
+                {
+                    "key" : "description",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "type",
+                    "type" : "String",
+                    "necessary" : false,
+                    "values" : ["String", "Integer", "Double", "List", "Datetime"]
+                },
+                {
+                    "key" : "num_key",
+                    "type" : "Integer",
+                    "necessary" : false
+                },
+                {
+                    "key" : "key_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                },
+                {
+                    "key" : "value_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                },
+                {
+                    "key" : "conn_attr_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                }
+            ],
+            "exist_members" : [
+                {
+                    "keys": ["num_key","key_list","value_list"],
+                    "ifkey": "type",
+                    "ifvalue" : "List"
+                }
+            ]
+        }
+    ],
+    "properties_value" : [
+        {
+            "connid" : "citycode",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "pointname",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "cityname",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "houseno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "type",
+            "type" : "List",
+            "necessary" : false,
+            "values" : ["がけ崩れ", "地すべり", "土石流", "雪崩", "その他"]
+        },
+        {
+            "connid" : "detail",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "measures",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "deadno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "injuredno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "occurday",
+            "type" : "String",
+            "necessary" : false,
+            "string_formats" : ["^\\d{4}-\\d{2}-\\d{2}$"]
+        },
+        {
+            "connid" : "occurtime",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "note",
+            "type" : "String",
+            "necessary" : false
+        }
+    ]
+}
