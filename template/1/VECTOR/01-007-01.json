@@ -101,7 +101,8 @@
         {
             "connid" : "citycode",
             "type" : "String",
-            "necessary" : true
+            "necessary" : true,
+            "string_formats" : ["^[0-9]{5}$"]
         },
         {
             "connid" : "cityname",
