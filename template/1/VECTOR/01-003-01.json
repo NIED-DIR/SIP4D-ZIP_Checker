@@ -150,7 +150,7 @@
             "connid" : "toukai",
             "type" : "List",
             "necessary" : false,
-            "values" : ["おそれなし","おそれあり"]
+            "values" : ["恐れ無","恐れ有"]
         },
         {
             "connid" : "supplyinfo",
