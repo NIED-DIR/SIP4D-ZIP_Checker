@@ -224,7 +224,8 @@ template
         {
             "connid" : "citycode",                                   # 推奨する属性名 citycode
             "type" : "String",                                       # 文字列
-            "necessary" : false                                      # 必須項目でない
+            "necessary" : false,                                     # 必須項目でない
+            "string_formats": ["^[0-9]{5}$"]                         # citycodeのフォーマットを正規表現で指定
         },
         {
             "connid" : "eststts",                                    # 推奨する属性名 eststts
