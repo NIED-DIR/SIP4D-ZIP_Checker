@@ -165,7 +165,7 @@
             "key": "lgcode",
             "type": "ArrayOfString",
             "necessary": false,
-            "string_formats": ["^[0-9]{5}$"]
+            "string_formats": ["^[0-9]{5}(,[0-9]{5})*$"]
         },
         {
             "key": "openflg",
