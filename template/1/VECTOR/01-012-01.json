@@ -34,8 +34,9 @@
                 },
                 {
                     "key" : "show",
-                    "type" : "Bool",
-                    "necessary" : true
+                    "type" : "String",
+                    "necessary" : true,
+                    "values" : ["true", "false"]
                 },
                 {
                     "key" : "description",
