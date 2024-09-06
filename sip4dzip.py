@@ -640,18 +640,18 @@ class Sip4dZipChecker:
         temfilemessage = ""
         if os.path.exists(self.templatePath() + self.code + ".json"):
             # 情報種別コードに対応する属性定義ファイルがある場合
-            tempfilemessage = "テンプレートファイル: " + self.code + ".json 使用してをチェックします"
+            tempfilemessage = "[INFO]テンプレートファイル: " + self.code + ".json を使用して、"
             temp = self.LoadJson(self.templatePath() + self.code + ".json", 'utf-8')
         else:
             # 汎用の属性定義ファイルを読み込む
-            tempfilemessage = "テンプレートファイル: temp_column.json 使用してをチェックします"
+            tempfilemessage = "[INFO]テンプレートファイル: temp_column.json を使用して、"
             temp = self.LoadJson(self.templatePath() + "temp_column.json", 'utf-8')
 
         # 地理空間情報ファイルのリストを取得
         for geofile in self.geofiles:
             columns_file = os.path.splitext(geofile)[0] + "_columns.json"
             
-            self.addMessage("[INFO]属性定義ファイル: " + columns_file + " を " + tempfilemessage)
+            self.addMessage( tempfilemessage + " 属性定義ファイル: " + columns_file + " をチェックします")
 
             if not os.path.exists(self.wrkPath() + columns_file):
                 self.result = False
