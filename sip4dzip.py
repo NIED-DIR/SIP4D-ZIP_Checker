@@ -4,14 +4,11 @@ import json
 import re
 import datetime
 import zipfile
-import shutil
+import tempfile
 
 # SIP4D-ZIPをチェックするクラス
 class Sip4dZipChecker:
-    reportfile = False              # レポートファイルを出力するか（メッセージをファイルに出力する）
-    removewrk = False               # チェック後にワークディレクトリを削除するか（但し、エラーがある場合は削除しない）
-    wrk_root = "./work"             # 展開したSIP4D-ZIPを格納するディレクトリ
-    wrk_dir = ""                    # SIP4D-ZIPのディレクトリ名
+    tmp_dir = ""                    # 一時ディレクトリ SIP4D-ZIPを展開する
     multi_geometry = False          # 複数のgeometry混在を許可するか
                                     #           以下リセット対象
     result = True                   # チェック結果
@@ -35,6 +32,7 @@ class Sip4dZipChecker:
         self.wrk_dir = wrk_dir
 
     def reset(self):
+        self.tmp_dir = ""
         self.result = True
         self.geotype = 0
         self.version = ""
@@ -52,15 +50,11 @@ class Sip4dZipChecker:
 
     # メッセージを追加する
     def addMessage(self, message: str):
-        if self.reportfile:
-            with open(self.wrkPath() + "00_report.txt", 'a', encoding='utf-8') as file:
-                file.write(message + "\n")
-        else:
-            print(message)
+        print(message)
     
     # ワークディレクトリのパスを返す
     def wrkPath(self):
-        return self.wrk_root + "/" + self.wrk_dir + "/"
+        return self.tmp_dir + "/"
     
     # データディレクトリのパスを返す
     def templatePath(self):
@@ -627,7 +621,6 @@ class Sip4dZipChecker:
         if len(data['entry']) != data['entry_num']:
             self.result = False
             self.addMessage("[ERROR]entry_numとファイル数が一致しません")
-        self.addMessage("")
         
         return True
     
@@ -662,7 +655,7 @@ class Sip4dZipChecker:
                 data = self.LoadJson(self.wrkPath() + columns_file, 'utf-8')
                 if self.CheckJsonFormat(data, temp) == False:
                     # 属性定義がエラーの場合、GeoJSONのプロパティチェックができないので、次のファイルへ
-                    self.addMessage("[INFO]地理空間ファイル: " + geofile + " のチェックをスキップします")
+                    self.addMessage("[INFO]属性定義ファイルにエラーがあるため、地理空間ファイル: " + geofile + " のチェックをスキップします")
                     continue 
 
             # columns.jsonからpropertiesを作成
@@ -675,7 +668,6 @@ class Sip4dZipChecker:
             if not self.CheckGeojson(data, propertys):
                 return False
             self.addMessage("[INFO]座標範囲: ( " + str(self.min_lng) + " , " + str(self.min_lat) + " )-( " + str(self.max_lng) + " , " + str(self.max_lat) + " )" )
-            self.addMessage("")
         return True
     
     # スタイルファイルのチェック
@@ -688,7 +680,7 @@ class Sip4dZipChecker:
             style_file = os.path.splitext(geofile)[0] + "_style.json"
             # スタイルファイルが存在するか
             if not os.path.exists(self.wrkPath() + style_file):
-                self.addMessage("[INFO]凡例ファイルがありません " + style_file)
+                self.addMessage("[WARN]凡例ファイルがありません " + style_file)
                 continue
 
             self.addMessage("[INFO]凡例ファイル: " + style_file + " をチェックします")
@@ -709,7 +701,7 @@ class Sip4dZipChecker:
             self.addMessage("[ERROR]SIP4D-ZIPファイルの展開に失敗しました " + zip_file)
             return False
 
-        self.addMessage("[INFO]SIP4D-ZIPを展開しました " + zip_file + "->" + self.wrkPath())   
+        self.addMessage("[INFO]SIP4D-ZIPを展開しました " + self.wrkPath())   
         return True
 
     # チェック開始
@@ -724,39 +716,29 @@ class Sip4dZipChecker:
             self.addMessage("[ERROR]SIP4D-ZIPファイルではありません " + zip_file)
             return False
         
-        starttime = datetime.datetime.now()
-        self.wrk_dir = starttime.strftime("%Y-%m-%d_%H-%M-%S_%f")
-        # ワークディレクトリを作成
-        if not os.path.exists(self.wrkPath()):
-            os.makedirs(self.wrkPath())
+        self.addMessage("[INFO]SIP4D-ZIPをチェックします " + zip_file )
+        self.addMessage("[INFO]開始時刻: " + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 
-        self.addMessage("SIP4D-ZIPをチェックします " + zip_file )
-        self.addMessage("開始時刻: " + starttime.strftime("%Y/%m/%d %H:%M:%S")+"\n")
+        with tempfile.TemporaryDirectory() as self.tmp_dir:        
+            # ZIPファイルを展開
+            if not self.Unzip(zip_file):
+                return False
         
-        # ZIPファイルを展開
-        if not self.Unzip(zip_file):
-            return False
+            # メタファイルのチェック
+            if self.CheckMetaFile() :
+                # 属性定義ファイルのチェック
+                self.CheckColumnsAndGeoDataFile_VECTOR() 
+                # スタイルファイルのチェック
+                self.CheckStyleFile()
+                # 終了時刻を表示
+                self.addMessage("[INFO]終了時刻: " + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
         
-        # メタファイルのチェック
-        if self.CheckMetaFile() :
-            # 属性定義ファイルのチェック
-            self.CheckColumnsAndGeoDataFile_VECTOR() 
-            # スタイルファイルのチェック
-            self.CheckStyleFile()
-            # 終了時刻を表示
-            self.addMessage("\n終了時刻: " + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")+ "\n")
-        
-        # チェック結果
-        if self.result:
-            self.addMessage("チェック結果: 正常です")
-            print(zip_file + "\t[OK]\t" + self.wrkPath() + "\t" + self.title + "\t" + self.author + "\t" + self.information_date + "\t" + self.disaster_name)
-            #ワークフォルダを削除
-            if self.removewrk :
-                shutil.rmtree(self.wrkPath())
-        else:
-            self.addMessage("チェック結果: エラーがあります")
-            print(zip_file + "\t[NG]\t" + self.wrkPath() + "\t" + self.title + "\t" + self.author + "\t" + self.information_date + "\t" + self.disaster_name)
-
+            # チェック結果
+            if self.result:
+                self.addMessage("チェック結果: 正常です")
+            else:
+                self.addMessage("チェック結果: エラーがあります")
+        self.addMessage("")
         return self.result
     
     # チェック開始
