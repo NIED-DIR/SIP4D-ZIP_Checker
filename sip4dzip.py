@@ -711,7 +711,7 @@ class Sip4dZipChecker:
     #  False: エラーあり
     # メッセージはmessageに格納される
     def CheckFile(self, zip_file: str):
-        if os.path.splitext(zip_file)[1] != ".zip":
+        if os.path.splitext(zip_file)[1].lower() != ".zip":
             self.result = False
             self.addMessage("[ERROR]SIP4D-ZIPファイルではありません " + zip_file)
             return False
@@ -751,7 +751,7 @@ class Sip4dZipChecker:
         if os.path.isdir(path):
             files = os.listdir(path)
             for file in files:
-                if os.path.isfile(path + "/" + file) and os.path.splitext(file)[1] == ".zip":
+                if os.path.isfile(path + "/" + file) and os.path.splitext(file)[1].lower() == ".zip":
                     self.reset()
                     self.CheckFile(path + "/" + file)
                 #サブフォルダのZIPファイルを検索
