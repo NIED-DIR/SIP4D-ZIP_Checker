@@ -245,8 +245,14 @@ class Sip4dZipChecker:
             self.result = False
             self.addMessage("[ERROR]プロパティが不正です")
             return False
-        return self.CheckJsonFormat(properties, temp, "properties")
-
+        r1 = self.CheckJsonFormat(properties, temp, "properties")
+        # 属性定義されていないプロパティがあるか
+        for key in properties:
+            if not self._FindKey(temp['members'], key):
+                #エラーにしない
+                self.addMessage("[WARN]未定義のプロパティがあります " + key)
+        return r1
+    
     def _CheckString(self, x: str, temp: dict):
         # 値のチェック valuesに一致するか
         if temp.get('values') is not None:
@@ -348,7 +354,7 @@ class Sip4dZipChecker:
             if column.get('connid') is not None:
                 connid = column['connid']
             #テンプレート検索
-            t = self._FindKey(temp, connid)
+            t = self._FindConnid(temp, connid)
             # 汎用的なプロパティ定義
             d = {"key": column['name'], "type": "StrNum", "necessary": False }
             if column.get('necessary') is not None:
@@ -403,11 +409,19 @@ class Sip4dZipChecker:
         return None        
 
     
-    # ArrayOfObjectから指定したconnid に紐づくkeyを検索する
-    def _FindKey(sel, aoo: list, connid: str):
+    # ArrayOfObjectから指定したconnidを検索する
+    def _FindConnid(sel, aoo: list, connid: str):
         for data in aoo:
             if data.get('connid') is not None:
                 if data['connid'] == connid:
+                    return data
+        return None
+
+    # ArrayOfObjectから指定したkeyを検索する
+    def _FindKey(sel, aoo: list, key: str):
+        for data in aoo:
+            if data.get('key') is not None:
+                if data['key'] == key:
                     return data
         return None
 
@@ -760,4 +774,5 @@ class Sip4dZipChecker:
                 if self.result == False:
                     ret = False
         return ret
+
 
