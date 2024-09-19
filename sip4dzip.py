@@ -8,11 +8,11 @@ import tempfile
 
 # SIP4D-ZIPをチェックするクラス
 class Sip4dZipChecker:
-    report_dir = ""                 # レポート出力先ディレクトリ
-    tmp_dir = ""                    # 一時ディレクトリ SIP4D-ZIPを展開する
-    filename = ""                   # チェック対象のファイル名
+    report_dir = ""                 # レポート出力先ディレクトリ　空文字の場合は標準出力
     multi_geometry = False          # 複数のgeometry混在を許可するか
-                                    #           以下リセット対象
+    # 以下リセット対象
+    tmp_dir = ""                    # 一時ディレクトリ ここにSIP4D-ZIPを展開する
+    filename = ""                   # チェック対象のファイル名
     result = True                   # チェック結果
     geotype = 0                     # geometryタイプ 0x01:Point 0x02:LineString 0x04:Polygon 0x08:MultiPoint 0x10:MultiLineString 0x20:MultiPolygon
                                     # 複数のgeometryが混在している場合、複数のビットが立つ
@@ -30,8 +30,8 @@ class Sip4dZipChecker:
     max_lat = 0.0                   # 緯度の最大値
     _datetime_formats = ["^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$", "^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+$","^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+[zZ]{1}$"]
 
-    def __init__(self, wrk_dir: str = ""):
-        self.wrk_dir = wrk_dir
+    def __init__(self, report_dir: str = ""):
+        self.report_dir = report_dir
 
     def reset(self):
         self.tmp_dir = ""
@@ -257,7 +257,7 @@ class Sip4dZipChecker:
         for key in properties:
             if not self._FindKey(temp['members'], key):
                 #エラーにしない
-                self.addMessage("[WARN]未定義のプロパティがあります " + key)
+                self.addMessage("[WARN]属性定義ファイルで未定義のプロパティがあります " + key)
         return r1
     
     def _CheckString(self, x: str, temp: dict):
@@ -549,7 +549,6 @@ class Sip4dZipChecker:
                     column['type'] != 'ArrayOfInteger' and column['type'] != 'ArrayOfDouble' and column['type'] != 'ArrayOfNumber':
                         self.result = ret = False
                         self.addMessage("[ERROR]" + parent + "." + column['key'] + " の型が不正です " + column['type'])
-                        continue
                     #要素数チェック
                     if column.get('count_members') is not None:
                         num = column['count_members']
@@ -558,7 +557,6 @@ class Sip4dZipChecker:
                             if c != len(x):
                                 self.result = ret = False
                                 self.addMessage("[ERROR]要素数が不正です " + parent + "." + column['key'] + " = " + str(len(x)) + " " + num + "=" + str(c))
-                                continue
                     # 配列の要素をチェック
                     if not self._CheckArray(x, column, parent):
                         self.result = ret = False

@@ -90,6 +90,18 @@
                     "type": "Integer",
                     "necessary": false
                 }
+            ],
+            "exist_members": [
+                {
+                    "keys" : ["icon","size"],
+                    "ifkey" : "point_type",
+                    "ifvalue" : "icon"
+                },
+                {
+                    "keys" : ["color","stroke","fill","size"],
+                    "ifkey" : "point_type",
+                    "ifvalue" : "circle"
+                }
             ]
         }
     ]
