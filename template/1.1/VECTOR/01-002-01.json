@@ -163,7 +163,7 @@
             "connid" : "trucksize",
             "type" : "List",
             "necessary" : false,
-            "values" : ["軽自動車","2tトラック","4tトラック","10tトラック","その他","不明"]
+            "values" : ["軽自動車","２ｔトラック","４ｔトラック","１０ｔトラック","その他","不明"]
         },
         {
             "connid" : "lift",
