@@ -8,7 +8,9 @@ import tempfile
 
 # SIP4D-ZIPをチェックするクラス
 class Sip4dZipChecker:
+    report_dir = ""                 # レポート出力先ディレクトリ
     tmp_dir = ""                    # 一時ディレクトリ SIP4D-ZIPを展開する
+    filename = ""                   # チェック対象のファイル名
     multi_geometry = False          # 複数のgeometry混在を許可するか
                                     #           以下リセット対象
     result = True                   # チェック結果
@@ -33,6 +35,7 @@ class Sip4dZipChecker:
 
     def reset(self):
         self.tmp_dir = ""
+        self.filename = ""
         self.result = True
         self.geotype = 0
         self.version = ""
@@ -50,7 +53,11 @@ class Sip4dZipChecker:
 
     # メッセージを追加する
     def addMessage(self, message: str):
-        print(message)
+        if self.report_dir != "" :
+            with open(self.report_dir + "/" + self.filename + ".txt", "a") as f:
+                f.write(message + "\n")
+        else:
+            print(message)
     
     # ワークディレクトリのパスを返す
     def wrkPath(self):
@@ -427,7 +434,7 @@ class Sip4dZipChecker:
 
     # メンバーの存在チェック
     def _ExistMembers(self, members: list, temp: dict, parent: str = ""):
-        self.addMessage("[INFO]要素の存在チェック " + parent + "." + temp['key'])
+        self.addMessage("[INFO]要素の存在チェック ")
         ret = True
         for m in temp['exist_members']:
             # valueの設定がある場合、key=valueのペアが存在すればOK
@@ -440,7 +447,7 @@ class Sip4dZipChecker:
                     # keys=valueのペアが全て存在しない
                     self.result = False
                     self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "." + key + " = " + m['value'].__str__())
-            elif m.get('ifkey') is not None and m.get('ifvalue') is not None:
+            if m.get('ifkey') is not None and m.get('ifvalue') is not None:
                 # ifkey=ifvalueのペアが存在するか？
                 if self._FindData(members, m['ifkey'], m['ifvalue']) is not None:
                     for key in m['keys']:
@@ -725,12 +732,12 @@ class Sip4dZipChecker:
     #  False: エラーあり
     # メッセージはmessageに格納される
     def CheckFile(self, zip_file: str):
+        self.filename = os.path.basename(zip_file)
         if os.path.splitext(zip_file)[1].lower() != ".zip":
             self.result = False
-            self.addMessage("[ERROR]SIP4D-ZIPファイルではありません " + zip_file)
+            self.addMessage("[ERROR]SIP4D-ZIPファイルではありません " + self.filename)
             return False
-        
-        self.addMessage("[INFO]SIP4D-ZIPをチェックします " + zip_file )
+        self.addMessage("[INFO]SIP4D-ZIPをチェックします " + self.filename )
         self.addMessage("[INFO]開始時刻: " + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 
         with tempfile.TemporaryDirectory() as self.tmp_dir:        
@@ -774,5 +781,3 @@ class Sip4dZipChecker:
                 if self.result == False:
                     ret = False
         return ret
-
-
