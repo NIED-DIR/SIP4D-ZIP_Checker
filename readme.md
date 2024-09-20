@@ -70,11 +70,18 @@ template
         * Stringのみ
 * オブジェクト配列の「exist_members」を持つ
     * exist_membersは、下位のmembers(ArrayOfObject)に対するチェックを定義する
-    * exist_membersは、2種類の項目チェックを定義することができる
+    * exist_membersは、4種類の項目チェックを定義することができる
         1. 項目名(keys)と値(value)の組み合わせが存在するかチェックする
+            * exist_membersのデータがkeys, valueの場合、keysとvalueの組み合わせが存在するかチェックする
         2. 項目名(ifkey)と値(ifvalue)の組み合わせが存在する場合に、項目名(keys)が存在するかチェックする 
-    * exist_membersのデータがkeys, valueの場合、keysとvalueの組み合わせが存在するかチェックする
-    * exist_membersのデータがifkey, ifvalue, keysの場合、ifkeyとifvalueの組み合わせが存在するObjectにおいて、keysが存在するかチェックする
+            * exist_membersのデータがifkey, ifvalue, keysの場合、ifkeyとifvalueの組み合わせが存在するObjectにおいて、keysが存在するかチェックする
+            * members配列にkeysの要素が1つでも存在する場合、正常とする
+        3. membersの上位階層に項目名(ifkey_p)と値(ifvalue_p)の組み合わせが存在する場合に、members内に項目名(keys)が存在するかチェックする
+            * exist_membersのデータがifkey_p, ifvalue_p, keysの場合、上位階層にifkey_pとifvalue_pの組み合わせが存在する場合において、membersにkeysが存在するかチェックする
+            * members配列にkeysの要素が全て存在する場合、正常とする
+        4. membersの上位階層に項目名(ifkey_p)の値が(ifminvalue_p)で示す値以上の場合、members内に項目名(keys)が存在するかチェックする
+            * exist_membersのデータがifkey_p, ifminvalue_p, keysの場合、上位階層にifkey_pの値がifminvalue_p以上の場合において、membersにkeysが存在するかチェックする
+            * members配列にkeysの要素が全て存在する場合、正常とする
 * オブジェクト配列の「properties_value」を持つ
     * properties_valueは、情報種別コード個別の属性定義ファイルのテンプレートにおいて使用する
     * SIP4D-ZIPチェッカーは、属性定義ファイルのフォーマットをチェックした後、同ファイルを使用してGeoJSONのpropertiesの値をチェックするためのテンプレートを生成する

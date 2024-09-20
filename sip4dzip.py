@@ -96,6 +96,7 @@ class Sip4dZipChecker:
         if len(data['features']) == 0:
             self.addMessage("[INFO]Featureがありません")
             return ret
+        cnt = 0
         for feature in data['features']:
             geotype = 0
             if feature['type'] != 'Feature':
@@ -128,14 +129,15 @@ class Sip4dZipChecker:
                 self.addMessage("[ERROR]不明なgeometry.typeです " + feature['geometry']['type'])
         
             self.geotype |= geotype
-            if not self._CheckGeometry(feature['geometry']['coordinates'], geotype) :
+            if not self._CheckGeometry(feature['geometry']['coordinates'], geotype, cnt) :
                 # エラーの場合、該当する地物のプロパティをメッセージに追加する
                 self.addMessage(feature['properties'].__str__())
 
             #プロパティチェックをする
             if temp is not None:
-                self._CheckProperties(feature['properties'], temp)
-                    
+                self._CheckProperties(feature['properties'], temp, cnt)
+            cnt += 1
+
         #複数のgeometryが混在していないかチェック
         if not (self.geotype == 0x01 or self.geotype == 0x02 or self.geotype == 0x04 or \
             self.geotype == 0x08 or self.geotype == 0x10 or self.geotype == 0x20) :
@@ -163,71 +165,71 @@ class Sip4dZipChecker:
 
 
     #Geometryのデータをチェックする
-    def _CheckGeometry(self, coordinates: dict, geotype: int):
+    def _CheckGeometry(self, coordinates: dict, geotype: int, no: int):
         # Multiかどうかの判定
         if geotype & 0x38 == 0:
             # シングルの場合
-            return self._CheckCoordinate(coordinates, geotype)
+            return self._CheckCoordinate(coordinates, geotype, no)
         else:
             # マルチの場合
             if len(coordinates) == 0:
                 self.result = False
-                self.addMessage("[ERROR]座標が不正です")
+                self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates 座標が不正です")
                 return False
             else:
                 ret = True
                 for coordinate in coordinates:
-                    if not self._CheckCoordinate(coordinate, geotype) :
+                    if not self._CheckCoordinate(coordinate, geotype, no) :
                         ret = False
                 return ret
 
     #座標のデータをチェックする
-    def _CheckCoordinate(self, coordinate: dict, geotype: int):
+    def _CheckCoordinate(self, coordinate: dict, geotype: int, no: int):
         # ポイントの場合
         if geotype == 0x01 or geotype == 0x08:
-            return self._CheckLatLng(coordinate)
+            return self._CheckLatLng(coordinate, no)
         # ラインストリングの場合
         if geotype == 0x02 or geotype == 0x10:
             if len(coordinate) < 2 :
                 self.result = False
-                self.addMessage("[ERROR]LineStringは2組以上の座標が必要です")
+                self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates LineStringは2組以上の座標が必要です")
                 return False
             else:
                 for coord in coordinate:
-                    return self._CheckLatLng(coord)
+                    return self._CheckLatLng(coord, no)
         # ポリゴンの場合
         if geotype == 0x04 or geotype == 0x20:
             if len(coordinate) == 0:
                 self.result = False
-                self.addMessage("[ERROR]Polygonのジオメトリ座標が不正です")
+                self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates Polygonのジオメトリ座標が不正です")
                 return False
             for polygon in coordinate:
                 if len(polygon) < 4 :
                     self.result = False
-                    self.addMessage("[ERROR]Polygonは4組以上の座標が必要です")
+                    self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates Polygonは4組以上の座標が必要です")
                     return False
                 else:
                     for coord in polygon:
-                        return self._CheckLatLng(coord)
+                        return self._CheckLatLng(coord, no)
                 # 最初の座標と最後の座標が同じかどうか
                 if polygon[0] != polygon[-1]:
                     self.result = False
-                    self.addMessage("[ERROR]Polygonの最初の座標と最後の座標が異なります")
+                    self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates Polygonの最初の座標と最後の座標が異なります")
                     return False
         # 未定義
         self.result = False
-        self.addMessage("[ERROR]不明なジオメトリタイプです")
+        self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates 不明なジオメトリタイプです")
         return False
         
     #緯度経度のチェック（配列が２つで、float型であること）
-    def _CheckLatLng(self, dat: any):
+    def _CheckLatLng(self, dat: any, no: int):
         if len(dat) != 2:
             self.result = False
-            self.addMessage("[ERROR]緯度経度が不正です " + dat.__str__())
+            self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates 緯度経度が不正です " + dat.__str__())
             return False
         if type(dat[0]) is not float or type(dat[1]) is not float:
             self.result = False
-            self.addMessage("[ERROR]緯度経度が不正です " + dat.__str__())
+            self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates 緯度経度が不正です " + dat.__str__())
             return False
         if self.min_lat == 0.0 and self.max_lat == 0.0 and self.min_lng == 0.0 and self.max_lng == 0.0:
             self.min_lng = dat[0]
@@ -247,7 +249,7 @@ class Sip4dZipChecker:
 
 
     #ＧｅｏＪＳＯＮのプロパティのチェック
-    def _CheckProperties(self, properties: dict, temp: dict):
+    def _CheckProperties(self, properties: dict, temp: dict, no: int):
         if type(properties) is not dict:
             self.result = False
             self.addMessage("[ERROR]プロパティが不正です")
@@ -257,7 +259,7 @@ class Sip4dZipChecker:
         for key in properties:
             if not self._FindKey(temp['members'], key):
                 #エラーにしない
-                self.addMessage("[WARN]属性定義ファイルで未定義のプロパティがあります " + key)
+                self.addMessage("[WARN]属性定義ファイルで未定義のプロパティがあります features[" + str(no) + "].properties." + key)
         return r1
     
     def _CheckString(self, x: str, temp: dict):
@@ -433,7 +435,7 @@ class Sip4dZipChecker:
         return None
 
     # メンバーの存在チェック
-    def _ExistMembers(self, members: list, temp: dict, parent: str = ""):
+    def _ExistMembers(self, data: dict, members: list, temp: dict, parent: str = ""):
         self.addMessage("[INFO]要素の存在チェック ")
         ret = True
         for m in temp['exist_members']:
@@ -451,10 +453,32 @@ class Sip4dZipChecker:
                 # ifkey=ifvalueのペアが存在するか？
                 if self._FindData(members, m['ifkey'], m['ifvalue']) is not None:
                     for key in m['keys']:
-                        if self._FindData(members, key) is None :
+                        if self._FindData(members, key) is None: # members配列にkeyが1つでも存在すればOK
                             ret = False
                             self.result = False
-                            self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "." + key +"("+ m['ifkey'] + " = " + m['ifvalue'] + ")")
+                            self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "." + key +" ( "+ m['ifkey'] + " = " + m['ifvalue'] + " )")
+            if m.get('ifkey_p') is not None and m.get('ifvalue_p') is not None:
+                # ifkey_p=ifvalue_pのペアが存在するか？
+                if data.get(m['ifkey_p']) is not None and data[m['ifkey_p']] == m['ifvalue_p']:
+                    for key in m['keys']:
+                        cnt = 0
+                        for member in members: # members配列にkeyが全て存在すればOK
+                            if member.get(key) is None:
+                                ret = False
+                                self.result = False
+                                self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "["+ str(cnt) +"]." + key +" ( 上位."+ m['ifkey_p'] + " = " + m['ifvalue_p'] + " )")
+                            cnt += 1
+            if m.get('ifkey_p') is not None and m.get('ifminvalue_p') is not None:
+                # ifkey_p=ifvalue_pのペアが存在するか？
+                if data.get(m['ifkey_p']) is not None and data[m['ifkey_p']] >= m['ifminvalue_p']:
+                    for key in m['keys']:
+                        cnt = 0
+                        for member in members: # members配列にkeyが全て存在すればOK
+                            if member.get(key) is None:
+                                ret = False
+                                self.result = False
+                                self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "["+ str(cnt) +"]." + key +" ( 上位."+ m['ifkey_p'] + " = " + str(data[m['ifkey_p']]) + " )")
+                            cnt += 1
         return ret
 
     # JSONファイルをチェックするための、データフォーマットを規定する
@@ -562,7 +586,7 @@ class Sip4dZipChecker:
                         self.result = ret = False
                     # 要素の存在チェック
                     if column.get('exist_members') is not None and column.get('type') == 'ArrayOfObject':
-                        if self._ExistMembers(x, column, parent) == False:
+                        if self._ExistMembers(data, target, column, parent) == False:
                             ret = False
 
 

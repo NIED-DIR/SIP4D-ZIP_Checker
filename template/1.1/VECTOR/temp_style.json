@@ -93,6 +93,26 @@
             ],
             "exist_members": [
                 {
+                    "keys" : ["point_type","size"],
+                    "ifkey_p": "type",
+                    "ifvalue_p": "point"
+                },
+                {
+                    "keys" : ["color","stroke"],
+                    "ifkey_p": "type",
+                    "ifvalue_p": "line"
+                },
+                {
+                    "keys" : ["color","stroke","fill"],
+                    "ifkey_p": "type",
+                    "ifvalue_p": "polygon"
+                },
+                {
+                    "keys" : ["value"],
+                    "ifkey_p" : "num_class",
+                    "ifminvalue_p" : 2
+                },
+                {
                     "keys" : ["icon","size"],
                     "ifkey" : "point_type",
                     "ifvalue" : "icon"
