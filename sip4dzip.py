@@ -28,7 +28,7 @@ class Sip4dZipChecker:
     max_lng = 0.0                   # 経度の最大値
     min_lat = 0.0                   # 緯度の最小値
     max_lat = 0.0                   # 緯度の最大値
-    _datetime_formats = ["^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+){0,1}[zZ].$"]
+    _datetime_formats = ["^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+){0,1}[zZ]{0,1}$"]
 
     def __init__(self, report_dir: str = ""):
         self.report_dir = report_dir
