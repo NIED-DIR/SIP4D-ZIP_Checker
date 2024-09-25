@@ -90,7 +90,8 @@ template
     * connidで指定した値を持つ name要素を探す。見つかれば、その要素に対して properties_valueの内容を適用する
     * 上記処理で見つからない場合、connid要素を探し、その要素に対して properties_valueの内容を適用する
     * 属性定義ファイルのtypeと、properties_valueのtypeが競合する場合、属性定義のtypeを優先する
-
+* ペイロードチェックのスキップ
+    * do_not_check_payload_files メンバがある場合、ペイロードのチェックをスキップする
 
 ### テンプレートサンプル
 ```
