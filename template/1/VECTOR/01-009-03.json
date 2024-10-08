@@ -76,7 +76,8 @@
                 {
                     "keys": ["num_key","key_list","value_list"],
                     "ifkey": "type",
-                    "ifvalue" : "List"
+                    "ifvalue" : "List",
+                    "necessary" : true
                 }
             ]
         }

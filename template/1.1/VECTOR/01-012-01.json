@@ -82,11 +82,13 @@
                 {
                     "keys": ["num_key","key_list","value_list"],
                     "ifkey": "type",
-                    "ifvalue" : "List"
+                    "ifvalue" : "List",
+                    "necessary" : true
                 },
                 {
                     "keys" : ["connid","name"],
-                    "value" : "citycode"
+                    "value" : "citycode",
+                    "necessary" : true
                 }
             ]
         }

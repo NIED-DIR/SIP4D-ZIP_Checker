@@ -445,7 +445,7 @@ class Sip4dZipChecker:
                 for key in m['keys']:
                     if self._FindData(members, key, m['value']) is not None:
                         ret = True
-                if ret != True:
+                if ret != True and m['necessary']:
                     # keys=valueのペアが全て存在しない
                     self.result = False
                     self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "." + key + " = " + m['value'].__str__())
@@ -453,7 +453,7 @@ class Sip4dZipChecker:
                 # ifkey=ifvalueのペアが存在するか？
                 if self._FindData(members, m['ifkey'], m['ifvalue']) is not None:
                     for key in m['keys']:
-                        if self._FindData(members, key) is None: # members配列にkeyが1つでも存在すればOK
+                        if self._FindData(members, key) is None and m['necessary']: # members配列にkeyが1つでも存在すればOK
                             ret = False
                             self.result = False
                             self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "." + key +" ( "+ m['ifkey'] + " = " + m['ifvalue'] + " )")
@@ -463,7 +463,7 @@ class Sip4dZipChecker:
                     for key in m['keys']:
                         cnt = 0
                         for member in members: # members配列にkeyが全て存在すればOK
-                            if member.get(key) is None:
+                            if member.get(key) is None and m['necessary']:
                                 ret = False
                                 self.result = False
                                 self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "["+ str(cnt) +"]." + key +" ( 上位."+ m['ifkey_p'] + " = " + m['ifvalue_p'] + " )")
@@ -474,7 +474,7 @@ class Sip4dZipChecker:
                     for key in m['keys']:
                         cnt = 0
                         for member in members: # members配列にkeyが全て存在すればOK
-                            if member.get(key) is None:
+                            if member.get(key) is None and m['necessary']:
                                 ret = False
                                 self.result = False
                                 self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "["+ str(cnt) +"]." + key +" ( 上位."+ m['ifkey_p'] + " = " + str(data[m['ifkey_p']]) + " )")
