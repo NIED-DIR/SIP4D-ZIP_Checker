@@ -161,7 +161,8 @@ template
                 {
                     "keys": ["num_key","key_list","value_list"],
                     "ifkey": "type",
-                    "ifvalue" : "List"
+                    "ifvalue" : "List",
+                    "necessary": true
                 }
             ]
         }
@@ -196,19 +197,23 @@ template
                 {
                     "keys": ["num_key","key_list","value_list"],
                     "ifkey": "type",
-                    "ifvalue" : "List"
+                    "ifvalue" : "List",
+                    "necessary": true
                 },                                                  # カンマを忘れずに追加
                 {
                     "keys": ["connid","name"],                      # 追加１
-                    "value": "eststts"
+                    "value": "eststts",
+                    "necessary": true
                 },
                 {
                     "keys": ["connid","name"],                      # 追加２
-                    "value": "name"
+                    "value": "name",
+                    "necessary": true
                 },
                 {
                     "keys": ["connid","name"],                      # 追加３
-                    "value": "cityname"
+                    "value": "cityname",
+                    "necessary": true
                 }
             ]
         }
