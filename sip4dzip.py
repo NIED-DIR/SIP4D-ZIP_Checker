@@ -28,7 +28,7 @@ class Sip4dZipChecker:
     max_lng = 0.0                   # 経度の最大値
     min_lat = 0.0                   # 緯度の最小値
     max_lat = 0.0                   # 緯度の最大値
-    _datetime_formats = ["^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+){0,1}[zZ]{0,1}$"]
+    _datetime_formats = ["^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+){0,1}[zZ]{0,1}$"]
 
     def __init__(self, report_dir: str = ""):
         self.report_dir = report_dir
@@ -722,13 +722,38 @@ class Sip4dZipChecker:
         self.addMessage("[INFO]SIP4D-ZIPを展開しました " + self.wrkPath())   
         return True
 
+    # UNZIPしたSIP4D-ZIPをチェックする
+    def CheckUnzipFiles(self):
+        # メタファイルのチェック
+        if self.CheckMetaFile() :
+            if self.payload_type == "VECTOR":
+                temp : dict
+                if os.path.exists(self.templatePath() + self.code + ".json"):
+                    # 情報種別コードに対応する属性定義ファイルがある場合
+                    self.addMessage("[INFO]テンプレートファイル: " + self.code + ".json を読み込みます")
+                    temp = self.LoadJson(self.templatePath() + self.code + ".json", 'utf-8')
+                else:
+                    # 汎用の属性定義ファイルを読み込む
+                    self.addMessage("[INFO]テンプレートファイル: temp_column.json を読み込みます")
+                    temp = self.LoadJson(self.templatePath() + "temp_column.json", 'utf-8')
+
+                # テンプレートファイルにdo_not_check_payload_filesがある場合は、ペイロードファイルのチェックを行わない
+                if temp.get('do_not_check_payload_files') is None:
+                    # 属性定義ファイルのチェック
+                    self.CheckColumnsAndGeoDataFile_VECTOR(temp) 
+                    # スタイルファイルのチェック
+                    self.CheckStyleFile()
+                else:
+                    self.addMessage("[WARN]***ペイロードファイルのチェックを行いません***")
+            
+
     # チェック開始
     # zip_file: ZIPファイル名
     # return: チェック結果
     #  True: 正常
     #  False: エラーあり
     # メッセージはmessageに格納される
-    def CheckFile(self, zip_file: str):
+    def CheckZipFile(self, zip_file: str):
         self.filename = os.path.basename(zip_file)
         if os.path.splitext(zip_file)[1].lower() != ".zip":
             self.result = False
@@ -741,29 +766,8 @@ class Sip4dZipChecker:
             # ZIPファイルを展開
             if not self.Unzip(zip_file):
                 return False
-        
-            # メタファイルのチェック
-            if self.CheckMetaFile() :
-                if self.payload_type == "VECTOR":
-                    temp : dict
-                    if os.path.exists(self.templatePath() + self.code + ".json"):
-                        # 情報種別コードに対応する属性定義ファイルがある場合
-                        self.addMessage("[INFO]テンプレートファイル: " + self.code + ".json を読み込みます")
-                        temp = self.LoadJson(self.templatePath() + self.code + ".json", 'utf-8')
-                    else:
-                        # 汎用の属性定義ファイルを読み込む
-                        self.addMessage("[INFO]テンプレートファイル: temp_column.json を読み込みます")
-                        temp = self.LoadJson(self.templatePath() + "temp_column.json", 'utf-8')
-
-                    # テンプレートファイルにdo_not_check_payload_filesがある場合は、ペイロードファイルのチェックを行わない
-                    if temp.get('do_not_check_payload_files') is None:
-                        # 属性定義ファイルのチェック
-                        self.CheckColumnsAndGeoDataFile_VECTOR(temp) 
-                        # スタイルファイルのチェック
-                        self.CheckStyleFile()
-                    else:
-                        self.addMessage("[WARN]***ペイロードファイルのチェックを行いません***")
-            
+            # 展開したファイルをチェック
+            self.CheckUnzipFiles()
             # 終了時刻を表示
             self.addMessage("[INFO]終了時刻: " + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
             # チェック結果
@@ -786,7 +790,7 @@ class Sip4dZipChecker:
             for file in files:
                 if os.path.isfile(path + "/" + file) and os.path.splitext(file)[1].lower() == ".zip":
                     self.reset()
-                    self.CheckFile(path + "/" + file)
+                    self.CheckZipFile(path + "/" + file)
                 #サブフォルダのZIPファイルを検索
                 if os.path.isdir(path + "/" + file):
                     self.Check(path + "/" + file)
