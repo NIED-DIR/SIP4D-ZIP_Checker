@@ -451,9 +451,10 @@ class Sip4dZipChecker:
                     self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "." + key + " = " + m['value'].__str__())
             if m.get('ifkey') is not None and m.get('ifvalue') is not None:
                 # ifkey=ifvalueのペアが存在するか？
-                if self._FindData(members, m['ifkey'], m['ifvalue']) is not None:
+                tg = self._FindData(members, m['ifkey'], m['ifvalue'])
+                if tg is not None:
                     for key in m['keys']:
-                        if self._FindData(members, key) is None and m['necessary']: # members配列にkeyが1つでも存在すればOK
+                        if tg.get(key) is None and m['necessary']: # members配列にkeyが1つでも存在すればOK
                             ret = False
                             self.result = False
                             self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "." + key +" ( "+ m['ifkey'] + " = " + m['ifvalue'] + " )")
