@@ -784,7 +784,7 @@ class Sip4dZipChecker:
         ret = True
         # パスがファイルならファイルをチェック
         if os.path.isfile(path):
-           ret = self.CheckFile(path)
+           ret = self.CheckZipFile(path)
         # パスがディレクトリならディレクトリ内のZIPファイルをチェック
         if os.path.isdir(path):
             files = os.listdir(path)
