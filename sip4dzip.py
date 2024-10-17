@@ -80,9 +80,13 @@ class Sip4dZipChecker:
         with open(filename, 'r', encoding=encoding) as file:
             try:
                 return json.load(file)
+            except UnicodeDecodeError as e:
+                self.result = False
+                self.addMessage("[ERROR]ファイルの文字コードが不正です " + filename)
+                return None
             except json.JSONDecodeError as e:
                 self.result = False
-                self.addMessage("[ERROR]ファイルの読み込みに失敗しました " + filename)
+                self.addMessage("[ERROR]JSONデコードに失敗しました " + filename)
                 return None
 
 
