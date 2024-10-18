@@ -87,7 +87,7 @@
                 },
                 {
                     "key": "size",
-                    "type": "Integer",
+                    "type": "Number",
                     "necessary": false
                 }
             ],
