@@ -73,9 +73,10 @@ template
     * exist_membersは、4種類の項目チェックを定義することができる
         1. 項目名(keys)と値(value)の組み合わせが存在するかチェックする
             * exist_membersのデータがkeys, valueの場合、keysとvalueの組み合わせが存在するかチェックする
-        2. 項目名(ifkey)と値(ifvalue)の組み合わせが存在する場合に、項目名(keys)が存在するかチェックする 
+        2. 項目名(ifkey)(ifkeys)と値(ifvalue)の組み合わせが存在する場合に、項目名(keys)が存在するかチェックする 
             * exist_membersのデータがifkey, ifvalue, keysの場合、ifkeyとifvalueの組み合わせが存在するObjectにおいて、keysが存在するかチェックする
             * members配列にkeysの要素が1つでも存在する場合、正常とする
+            * valuesが存在する場合、keysの要素の値がvaluesのいずれかと一致する場合、正常とする
         3. membersの上位階層に項目名(ifkey_p)と値(ifvalue_p)の組み合わせが存在する場合に、members内に項目名(keys)が存在するかチェックする
             * exist_membersのデータがifkey_p, ifvalue_p, keysの場合、上位階層にifkey_pとifvalue_pの組み合わせが存在する場合において、membersにkeysが存在するかチェックする
             * members配列にkeysの要素が全て存在する場合、正常とする
@@ -224,8 +225,20 @@ template
 ```
 避難所の必須項目は、esttsts、name、citynameの３つです。  
 項目名 connid もしくは name で、値が esttsts、name、cityname の存在をチェックするため、exist_membersに３つのオブジェクトを追加しました。
+```
+                {
+                    "keys": ["conn_attr_list"],                      # 追加４
+                    "ifkeys" : ["connid","name"],                    # conn_attr_listが必要になる条件
+                    "ifvalue" : "eststts",                           # conn_attr_listが必要になる条件
+                    "necessary": false,
+                    "values" : ["notopen","open","close","permanent","unknown","other"]
+                }
 
-次に、GeoJSONのpropertiesの値をチェックするためのproperties_valueを作成します。  
+```
+項目名の「eststts」は選択肢（List型）の必須項目です。そのため選択肢の内容によって「conn_attr_list」が必須になる場合があります。ifkeysとifvalueでconn_attr_listが必要になる条件を指定します。上記の場合、connidもしくはnameのいずれかの値がeststtsの場合に、conn_attr_listが必要になることを設定しています。SIP4D-ZIPの仕様では、value_listの値がモデル定義仕様どおりの値の場合、conn_attr_listは省略できます。そのため、necessaryはfalseに設定します。conn_attr_listが存在する場合、その値の取るべき値としてvaluesを指定します。
+
+
+次に、GeoJSONのpropertiesの値をチェックするためのproperties_valueを作成します。  本チェックプログラムは、属性定義ファイルのフォーマットをチェックした後、そのファイルを使用してGeoJSONのpropertiesの値をチェックするためのテンプレートを生成します。ですが、属性定義ファイルのみでは、GeoJSONのpropertiesの値をチェックするための情報が不足しています。そのため、properties_valueを使用して、GeoJSONのpropertiesの値をチェックするためのテンプレートを補完します。
 ※初期状態では、properties_valueは空の配列です。
 ```
     ... 省略 ...
