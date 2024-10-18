@@ -93,6 +93,20 @@
                     "keys" : ["connid","name"],
                     "value" : "cityname",
                     "necessary" : true
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "roadtype",
+                    "necessary" : false,
+                    "values" : ["expressway","national_road","pref_road","municipal_road","unknown"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "passstts",
+                    "necessary" : false,
+                    "values" : ["road_close","close_road_large","chain_regulation","lane_regulation","one_sided_alternating_traffic","face_to_face_traffic","other","unknwon"]
                 }
             ]
         }

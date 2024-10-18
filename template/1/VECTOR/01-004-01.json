@@ -93,6 +93,55 @@
                     "keys" : ["connid","name"],
                     "value" : "cityname",
                     "necessary" : true
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "estab",
+                    "necessary" : false,
+                    "values" : ["close", "notaccept", "open", "unknown", "other"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "garbage",
+                    "necessary" : false,
+                    "values" : ["notaccept", "acceptable"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "debris",
+                    "necessary" : false,
+                    "values" : ["notaccept", "acceptable"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "sand",
+                    "necessary" : false,
+                    "values" : ["notaccept", "acceptable"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "wood",
+                    "necessary" : false,
+                    "values" : ["notaccept", "acceptable"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "mix",
+                    "necessary" : false,
+                    "values" : ["notaccept", "acceptable"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "direct",
+                    "necessary" : false,
+                    "values" : ["notaccept", "acceptable"]
                 }
             ]
         }

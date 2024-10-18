@@ -421,6 +421,28 @@ class Sip4dZipChecker:
                     return data
         return None        
 
+    # ArrayOfObjectから指定した複数候補のキーと値を持つデータを検索する
+    def _FindDataKeys(self, aoo: list, keys: list, value: str = "" ):
+        for key in keys:
+            d = self._FindData(aoo, key, value)
+            if d is not None:
+                return d
+        return None
+    
+    # 型不明のデータ群が指定したvaluesであるかチェックする
+    def _CheckValues(self, data: any, values: list):
+        ret = True
+        match data:
+            case str(x) | int(x) | float(x) :
+                ret = False
+                for value in values:
+                    if x == value:
+                        ret = True
+            case list(x) :
+                for d in x:
+                    if not self._CheckValues(d, values) :
+                        ret = False
+        return ret
     
     # ArrayOfObjectから指定したconnidを検索する
     def _FindConnid(sel, aoo: list, connid: str):
@@ -453,15 +475,30 @@ class Sip4dZipChecker:
                     # keys=valueのペアが全て存在しない
                     self.result = False
                     self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "." + key + " = " + m['value'].__str__())
-            if m.get('ifkey') is not None and m.get('ifvalue') is not None:
+            if m.get('ifvalue') is not None:
+                tg = None
+                ifk = None
                 # ifkey=ifvalueのペアが存在するか？
-                tg = self._FindData(members, m['ifkey'], m['ifvalue'])
+                if m.get('ifkey') is not None:
+                    ifk = m['ifkey']
+                    tg = self._FindData(members, m['ifkey'], m['ifvalue'])
+                if m.get('ifkeys') is not None:
+                    ifk = m['ifkeys']
+                    tg = self._FindDataKeys(members, m['ifkeys'], m['ifvalue'])
                 if tg is not None:
                     for key in m['keys']:
-                        if tg.get(key) is None and m['necessary']: # members配列にkeyが1つでも存在すればOK
-                            ret = False
-                            self.result = False
-                            self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "." + key +" ( "+ m['ifkey'] + " = " + m['ifvalue'] + " )")
+                        if tg.get(key) is None : # members配列にkeyが1つでも存在すればOK
+                            if m['necessary']:
+                                ret = False
+                                self.result = False
+                                self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "." + key +" ("+ str(ifk) + "=" + m['ifvalue'] + ")")
+                        else :
+                            if m.get('values') is not None:
+                                if not self._CheckValues(tg[key], m['values']) :
+                                    ret = False
+                                    self.result = False
+                                    self.addMessage("[ERROR]値が不正です " + parent + "." + temp['key'] + "." + key + "=" + str(tg[key]) + " (" + str(ifk) + "=" + m['ifvalue'] + ")")
+
             if m.get('ifkey_p') is not None and m.get('ifvalue_p') is not None:
                 # ifkey_p=ifvalue_pのペアが存在するか？
                 if data.get(m['ifkey_p']) is not None and data[m['ifkey_p']] == m['ifvalue_p']:
@@ -471,7 +508,7 @@ class Sip4dZipChecker:
                             if member.get(key) is None and m['necessary']:
                                 ret = False
                                 self.result = False
-                                self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "["+ str(cnt) +"]." + key +" ( 上位."+ m['ifkey_p'] + " = " + m['ifvalue_p'] + " )")
+                                self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "["+ str(cnt) +"]." + key +" (上位."+ m['ifkey_p'] + " = " + m['ifvalue_p'] + ")")
                             cnt += 1
             if m.get('ifkey_p') is not None and m.get('ifminvalue_p') is not None:
                 # ifkey_p=ifvalue_pのペアが存在するか？
@@ -482,7 +519,7 @@ class Sip4dZipChecker:
                             if member.get(key) is None and m['necessary']:
                                 ret = False
                                 self.result = False
-                                self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "["+ str(cnt) +"]." + key +" ( 上位."+ m['ifkey_p'] + " = " + str(data[m['ifkey_p']]) + " )")
+                                self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "["+ str(cnt) +"]." + key +" (上位."+ m['ifkey_p'] + " = " + str(data[m['ifkey_p']]) + ")")
                             cnt += 1
         return ret
 

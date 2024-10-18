@@ -93,6 +93,41 @@
                     "keys": ["connid","name"],
                     "value": "cityname",
                     "necessary" : true
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "eststts",
+                    "necessary" : false,
+                    "values" : ["notopen","open","close","permanent","unknown","other"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "type",
+                    "necessary" : false,
+                    "values" : ["shelter","temp_shelter","welf_shelter","unknown"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "division",
+                    "necessary" : false,
+                    "values" : ["spec_shelter","spec_emg_evacueeplace","assign_emg_shelter","unspecified"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "trucksize",
+                    "necessary" : false,
+                    "values" : ["light","2t","4t","10t","other","unknown"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "crowdstts",
+                    "necessary" : false,
+                    "values" : ["free","congestion","full","unknown"]
                 }
             ]
        }

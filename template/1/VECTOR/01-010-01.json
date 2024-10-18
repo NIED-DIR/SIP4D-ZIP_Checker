@@ -78,6 +78,13 @@
                     "ifkey": "type",
                     "ifvalue" : "List",
                     "necessary" : true
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid", "name"],
+                    "ifvalue" : "type",
+                    "necessary" : false,
+                    "values" : ["rockfall", "landslide", "debris_flow", "avalanche", "other"]
                 }
             ]
         }

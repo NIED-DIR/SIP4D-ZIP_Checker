@@ -93,6 +93,27 @@
                     "keys": ["connid","name"],
                     "value": "status",
                     "necessary" : true
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "status",
+                    "necessary" : false ,
+                    "values" : ["sup_req", "sup_arrgd", "supporting", "non_sup_req", "unknown", "other"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "kyoten",
+                    "necessary" : false,
+                    "values" : ["unspecified", "specified"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "toukai",
+                    "necessary" : false,
+                    "values" : ["no_fear", "fearful"]
                 }
             ]
         }

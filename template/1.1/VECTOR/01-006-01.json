@@ -99,6 +99,20 @@
                     "keys" : ["connid","name"],
                     "value" : "cityname",
                     "necessary" : true
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "josetu",
+                    "necessary" : false,
+                    "values" : ["permanect", "temporary"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "estab",
+                    "necessary" : false,
+                    "values" : ["close", "notaccept", "open", "unknown", "other"]
                 }
             ]
         }

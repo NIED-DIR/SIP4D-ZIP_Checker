@@ -99,6 +99,41 @@
                     "keys": ["connid","name"],
                     "value": "cityname",
                     "necessary" : true
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "estab",
+                    "necessary" : false,
+                    "values" : ["close","notaccept","open","unknown","other"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "division",
+                    "necessary" : false,
+                    "values" : ["w_area_sbase","l_area_sbase","unknown"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "pass",
+                    "necessary" : false,
+                    "values" : ["impassable","passable"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "trucksize",
+                    "necessary" : false,
+                    "values" : ["light","2t","4t","10t","other","unknown"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "lift",
+                    "necessary" : false,
+                    "values" : ["notoperating","operating"]
                 }
             ]
         }
