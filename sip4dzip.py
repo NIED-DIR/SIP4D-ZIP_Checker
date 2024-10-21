@@ -60,7 +60,7 @@ class Sip4dZipChecker:
                 f.write(message + "\n")
         else:
             print(message)
-            report += message + "\n"
+            self.report += message + "\n"
     
     # ワークディレクトリのパスを返す
     def wrkPath(self):
