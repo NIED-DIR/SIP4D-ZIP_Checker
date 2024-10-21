@@ -9,9 +9,9 @@ import tempfile
 # SIP4D-ZIPをチェックするクラス
 class Sip4dZipChecker:
     report_dir = ""                 # レポート出力先ディレクトリ　空文字の場合は標準出力
-    report = ""                     # レポート
     multi_geometry = False          # 複数のgeometry混在を許可するか
     # 以下リセット対象
+    report = ""                     # レポート
     tmp_dir = ""                    # 一時ディレクトリ ここにSIP4D-ZIPを展開する
     filename = ""                   # チェック対象のファイル名
     result = True                   # チェック結果
@@ -33,6 +33,7 @@ class Sip4dZipChecker:
 
     def __init__(self, report_dir: str = ""):
         self.report_dir = report_dir
+        self.reset()
 
     def reset(self):
         self.report = ""
