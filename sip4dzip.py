@@ -10,6 +10,7 @@ import tempfile
 class Sip4dZipChecker:
     report_dir = ""                 # レポート出力先ディレクトリ　空文字の場合は標準出力
     multi_geometry = False          # 複数のgeometry混在を許可するか
+    template_root = "./template"    # テンプレートのルートディレクトリ
     # 以下リセット対象
     report = ""                     # レポート
     tmp_dir = ""                    # 一時ディレクトリ ここにSIP4D-ZIPを展開する
@@ -69,7 +70,7 @@ class Sip4dZipChecker:
     
     # データディレクトリのパスを返す
     def templatePath(self):
-        return "./template/" + self.version + "/" + self.payload_type + "/"
+        return self.template_root + "/" + self.version + "/" + self.payload_type + "/"
     
     # 空間情報の初期化
     def initSpatial(self):
@@ -647,7 +648,7 @@ class Sip4dZipChecker:
     # メタファイルのチェック
     def CheckMetaFile(self):
         # 初期チェックのテンプレートを読み込む
-        columns = self.LoadJson("./template/temp_meta.json", 'utf-8')
+        columns = self.LoadJson( self.template_root + "/temp_meta.json", 'utf-8')
 
         #　メタファイルが存在するか
         if not os.path.exists(self.wrkPath() + "sip4d_zip_meta.json"):
