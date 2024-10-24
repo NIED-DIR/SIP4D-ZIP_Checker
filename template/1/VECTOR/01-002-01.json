@@ -106,7 +106,7 @@
                     "ifkeys" : ["connid","name"],
                     "ifvalue" : "division",
                     "necessary" : false,
-                    "values" : ["w_area_sbase","l_area_sbase","unknown"]
+                    "values" : ["w_areasbase","l_areasbase","unknown"]
                 },
                 {
                     "keys" : ["conn_attr_list"],
