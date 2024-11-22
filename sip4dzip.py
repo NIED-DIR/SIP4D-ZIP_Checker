@@ -70,7 +70,7 @@ class Sip4dZipChecker:
     
     # データディレクトリのパスを返す
     def templatePath(self):
-        return self.template_root + "/" + self.version + "/" + self.payload_type + "/"
+        return str(self.template_root) + "/" + self.version + "/" + self.payload_type + "/"
     
     # 空間情報の初期化
     def initSpatial(self):
@@ -648,7 +648,7 @@ class Sip4dZipChecker:
     # メタファイルのチェック
     def CheckMetaFile(self):
         # 初期チェックのテンプレートを読み込む
-        columns = self.LoadJson( self.template_root + "/temp_meta.json", 'utf-8')
+        columns = self.LoadJson( str(self.template_root) + "/temp_meta.json", 'utf-8')
 
         #　メタファイルが存在するか
         if not os.path.exists(self.wrkPath() + "sip4d_zip_meta.json"):
@@ -763,7 +763,7 @@ class Sip4dZipChecker:
                 existing_zip.extractall(self.wrkPath())
         except zipfile.BadZipFile:
             self.result = False
-            self.addMessage("[ERROR]SIP4D-ZIPファイルの展開に失敗しました " + zip_file)
+            self.addMessage("[ERROR]SIP4D-ZIPファイルの展開に失敗しました " + str(zip_file))
             return False
 
         self.addMessage("[INFO]SIP4D-ZIPを展開しました " + self.wrkPath())   
@@ -804,9 +804,9 @@ class Sip4dZipChecker:
         self.filename = os.path.basename(zip_file)
         if os.path.splitext(zip_file)[1].lower() != ".zip":
             self.result = False
-            self.addMessage("[ERROR]SIP4D-ZIPファイルではありません " + zip_file)
+            self.addMessage("[ERROR]SIP4D-ZIPファイルではありません " + str(zip_file))
             return False
-        self.addMessage("[INFO]SIP4D-ZIPをチェックします " + zip_file)
+        self.addMessage("[INFO]SIP4D-ZIPをチェックします " + str(zip_file))
         self.addMessage("[INFO]開始時刻: " + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 
         with tempfile.TemporaryDirectory() as self.tmp_dir:        
