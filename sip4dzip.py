@@ -58,7 +58,7 @@ class Sip4dZipChecker:
     # メッセージを追加する
     def addMessage(self, message: str):
         if self.report_dir != "" :
-            with open(self.report_dir + "/" + self.filename + ".txt", "a") as f:
+            with open(self.report_dir + "/" + self.filename + ".txt", "a", encoding="UTF-8") as f:
                 f.write(message + "\n")
         else:
             print(message)
