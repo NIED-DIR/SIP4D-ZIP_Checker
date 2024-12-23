@@ -95,32 +95,38 @@
                 {
                     "keys" : ["point_type","size"],
                     "ifkey_p": "type",
-                    "ifvalue_p": "point"
+                    "ifvalue_p": "point",
+                    "necessary" : true
                 },
                 {
                     "keys" : ["color","stroke"],
                     "ifkey_p": "type",
-                    "ifvalue_p": "line"
+                    "ifvalue_p": "line",
+                    "necessary" : true
                 },
                 {
                     "keys" : ["color","stroke","fill"],
                     "ifkey_p": "type",
-                    "ifvalue_p": "polygon"
+                    "ifvalue_p": "polygon",
+                    "necessary" : true
                 },
                 {
                     "keys" : ["value"],
                     "ifkey_p" : "num_class",
-                    "ifminvalue_p" : 2
+                    "ifminvalue_p" : 2,
+                    "necessary" : true
                 },
                 {
                     "keys" : ["icon","size"],
                     "ifkey" : "point_type",
-                    "ifvalue" : "icon"
+                    "ifvalue" : "icon",
+                    "necessary" : true
                 },
                 {
                     "keys" : ["color","stroke","fill","size"],
                     "ifkey" : "point_type",
-                    "ifvalue" : "circle"
+                    "ifvalue" : "circle",
+                    "necessary" : true
                 }
             ]
         }
