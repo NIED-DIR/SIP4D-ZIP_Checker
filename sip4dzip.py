@@ -727,6 +727,7 @@ class Sip4dZipChecker:
             propertys = self._ConvertColumns(data, temp.get('properties_value'))
             # 地理空間情報ファイルをチェックする
             self.addMessage("[INFO]地理空間ファイル: " + geofile + " をチェックします")
+            self.geotype = 0
             data = self.LoadJson(self.wrkPath() + geofile, 'utf-8')
             if data is None:
                 return False
