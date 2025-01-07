@@ -127,7 +127,7 @@
             "connid" : "roadtype",
             "type" : "List",
             "necessary" : false,
-            "values" : ["高速自動車道", "一般国道", "都道府県道", "市区町村道","不明"]
+            "values" : ["高速自動車国道", "一般国道", "都道府県道", "市区町村道","不明"]
         },
         {
             "connid" : "roadno",
