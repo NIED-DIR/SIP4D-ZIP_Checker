@@ -14,6 +14,9 @@ $ python3 sip4dzip_check.py [入力パス]
 
 :warning: SIP4D-ZIPの仕様については、[災害情報共有のための共通データフレームワーク－SIP4D-ZIP](https://webdesk.jsa.or.jp/books/W11M0090/index/?bunsyo_id=JSA-S1016%3A2023)を参照してください。
 
+# SIP4D-ZIP Webchecker
+本ツールを使用したWebチェッカーを以下のURLで公開しています。
+* [SIP4D-ZIP Webchecker](https://sip4dkit-web.bosai.go.jp/checker/)
 # 設定ファイル
 templateフォルダにフォーマットチェックの設定ファイルを配置します。  
 templateフォルダ直下にtemp_meta.jsonが配置してあり、このファイルを使用してメタデータファイルの初期チェックを行います。初期チェックによって、バージョン、ペイロードタイプ、情報種別コードを読み取り、サブフォルダに格納されているテンプレートファイルを使用し、改めて詳細なフォーマットチェックを行います。
