@@ -15,8 +15,7 @@
         {
             "key": "code",
             "type": "String",
-            "necessary": true,
-            "string_formats": ["^\\d{2}-\\d{3}-\\d{2}$"]
+            "necessary": true
         },
         {
             "key": "payload_type",
