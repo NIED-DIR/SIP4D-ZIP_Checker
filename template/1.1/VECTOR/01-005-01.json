@@ -112,7 +112,7 @@
                     "ifkeys" : ["connid","name"],
                     "ifvalue" : "passstts",
                     "necessary" : false,
-                    "values" : ["road_close","close_road_large","chain_regulation","lane_regulation","one_sided_alternating_traffic","face_to_face_traffic","other","unknwon"]
+                    "values" : ["road_close","close_road_large","chain_regulation","lane_regulation","one_sided_alternating_traffic","face_to_face_traffic","other","unknwon","unknown"]
                 }
             ]
         }
