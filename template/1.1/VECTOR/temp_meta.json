@@ -21,7 +21,7 @@
             "key": "code",
             "type": "String",
             "necessary": true,
-            "string_formats": ["^[0-9]{2}-[0-9]{3}-[0-9]{2}$"]
+            "string_formats": ["^[0-9]{2}-[0-9]{3}-[0-9]{2}$","^[0-9]{4}-[0-9]{2}$"]
         },
         {
             "key": "category",
