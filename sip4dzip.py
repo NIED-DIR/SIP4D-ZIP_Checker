@@ -98,12 +98,21 @@ class Sip4dZipChecker:
     #GeoJSONの形式チェック
     def CheckGeojson(self, data: dict, temp: dict = None):
         ret = True
-        if data['type'] != 'FeatureCollection':
+        if data.get('type') is None:
             self.result = ret = False
-            self.addMessage("[ERROR]FeatureCollectionがありません")
+            self.addMessage("[ERROR]GeoJSONの項目.typeがありません")
+            return ret
+        elif data['type'] != 'FeatureCollection':
+            self.result = ret = False
+            self.addMessage("[ERROR].typeがFeatureCollectionではありません")
+            return ret
         #地物なし
-        if len(data['features']) == 0:
-            self.addMessage("[INFO]Featuresがありません")
+        if data.get('features') is None:
+            self.result = ret = False
+            self.addMessage("[ERROR]GeoJSONの項目.featuresがありません")
+            return ret
+        elif len(data['features']) == 0:
+            self.addMessage("[INFO]Featuresが 0件です")
             return ret
         cnt = 0
         for feature in data['features']:
