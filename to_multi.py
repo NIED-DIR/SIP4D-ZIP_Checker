@@ -28,7 +28,7 @@ def to_multi(data):
             feature['geometry']['coordinates'] = [feature['geometry']['coordinates']]
         elif feature['geometry']['type'] == 'Polygon':
             feature['geometry']['type'] = 'MultiPolygon'
-            feature['geometry']['coordinates'] = [[feature['geometry']['coordinates']]]
+            feature['geometry']['coordinates'] = [feature['geometry']['coordinates']]
     return data
 
 #引き数のチェック
