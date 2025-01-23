@@ -814,9 +814,9 @@ class Sip4dZipChecker:
         self.filename = os.path.basename(zip_file)
         if os.path.splitext(zip_file)[1].lower() != ".zip":
             self.result = False
-            self.addMessage("[ERROR]SIP4D-ZIPファイルではありません " + str(zip_file))
+            self.addMessage("[ERROR]SIP4D-ZIPファイルではありません " + str(self.filename))
             return False
-        self.addMessage("[INFO]SIP4D-ZIPをチェックします " + str(zip_file))
+        self.addMessage("[INFO]SIP4D-ZIPをチェックします " + str(self.filename))
         self.addMessage("[INFO]開始時刻: " + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 
         with tempfile.TemporaryDirectory() as self.tmp_dir:        
