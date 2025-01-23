@@ -1,0 +1,276 @@
+{
+    "members": [
+        {
+            "key": "version",
+            "type": "String",
+            "necessary": true
+        },
+        {
+            "key": "code",
+            "type": "String",
+            "necessary": true,
+            "values": ["01-004-01"]
+        },
+        {
+            "key": "type",
+            "type": "String",
+            "necessary": true,
+            "values": ["Point"]
+        },
+        {
+            "key": "num_column",
+            "type": "Integer",
+            "necessary": true,
+            "min_value": 1
+        },
+        {
+            "key" : "columns",
+            "type" : "ArrayOfObject",
+            "necessary" : true,
+            "count_members" : "num_column",
+            "members" : [
+                {
+                    "key" : "name",
+                    "type" : "String",
+                    "necessary" : true
+                },
+                {
+                    "key" : "jname",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "connid",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "show",
+                    "type" : "Bool",
+                    "necessary" : true
+                },
+                {
+                    "key" : "description",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "type",
+                    "type" : "String",
+                    "necessary" : false,
+                    "values" : ["String", "Integer", "Double", "List", "Datetime"]
+                },
+                {
+                    "key" : "num_key",
+                    "type" : "Integer",
+                    "necessary" : false
+                },
+                {
+                    "key" : "key_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                },
+                {
+                    "key" : "value_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                },
+                {
+                    "key" : "conn_attr_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                }
+            ],
+            "exist_members": [
+                {
+                    "keys": ["num_key","key_list","value_list"],
+                    "ifkey": "type",
+                    "ifvalue" : "List",
+                    "necessary" : true
+                },
+                {
+                    "keys" : ["connid","name"],
+                    "value" : "estab",
+                    "necessary" : true
+                },
+                {
+                    "keys" : ["connid","name"],
+                    "value" : "name",
+                    "necessary" : true
+                },
+                {
+                    "keys" : ["connid","name"],
+                    "value" : "cityname",
+                    "necessary" : true
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "estab",
+                    "necessary" : false,
+                    "values" : ["close", "notaccept", "open", "unknown", "other"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "garbage",
+                    "necessary" : false,
+                    "values" : ["notaccept", "acceptable"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "debris",
+                    "necessary" : false,
+                    "values" : ["notaccept", "acceptable"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "sand",
+                    "necessary" : false,
+                    "values" : ["notaccept", "acceptable"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "wood",
+                    "necessary" : false,
+                    "values" : ["notaccept", "acceptable"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "mix",
+                    "necessary" : false,
+                    "values" : ["notaccept", "acceptable"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "direct",
+                    "necessary" : false,
+                    "values" : ["notaccept", "acceptable"]
+                }
+            ]
+        }
+    ],
+    "properties_value" : [
+        {
+            "connid" : "id",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "citycode",
+            "type" : "String",
+            "necessary" : false,
+            "string_formats" : ["^[0-9]{5}$"]
+        },
+        {
+            "connid" : "estab",
+            "type" : "List",
+            "necessary" : true,
+            "values" : ["閉鎖", "受入不可", "開設", "不明", "その他"]
+        },
+        {
+            "connid" : "name",
+            "type" : "String",
+            "necessary" : true
+        },
+        {
+            "connid" : "namekana",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "phoneno",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "cityname",
+            "type" : "String",
+            "necessary" : true
+        },
+        {
+            "connid" : "address",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "area",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "storage",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "usestorage",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "garbage",
+            "type" : "List",
+            "necessary" : false,
+            "values" : ["受入不可", "受入可"]
+        },
+        {
+            "connid" : "debris",
+            "type" : "List",
+            "necessary" : false,
+            "values" : ["受入不可", "受入可"]
+        },
+        {
+            "connid" : "sand",
+            "type" : "List",
+            "necessary" : false,
+            "values" : ["受入不可", "受入可"]
+        },
+        {
+            "connid" : "wood",
+            "type" : "List",
+            "necessary" : false,
+            "values" : ["受入不可", "受入可"]
+        },
+        {
+            "connid" : "mix",
+            "type" : "List",
+            "necessary" : false,
+            "values" : ["受入不可", "受入可"]
+        },
+        {
+            "connid" : "direct",
+            "type" : "List",
+            "necessary" : false,
+            "values" : ["受入不可", "受入可"]
+        },
+        {
+            "connid" : "machineno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "starttime",
+            "type" : "Datetime",
+            "necessary" : false
+        },
+        {
+            "connid" : "endtime",
+            "type" : "Datetime",
+            "necessary" : false
+        },
+        {
+            "connid" : "note",
+            "type" : "String",
+            "necessary" : false
+        }
+    ]
+}

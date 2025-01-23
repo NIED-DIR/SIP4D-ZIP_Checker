@@ -1,0 +1,229 @@
+{
+    "members": [
+        {
+            "key": "version",
+            "type": "String",
+            "necessary": true
+        },
+        {
+            "key": "code",
+            "type": "String",
+            "necessary": true,
+            "values": ["01-003-01"]
+        },
+        {
+            "key": "type",
+            "type": "String",
+            "necessary": true,
+            "values": ["Point"]
+        },
+        {
+            "key": "num_column",
+            "type": "Integer",
+            "necessary": true,
+            "min_value": 1
+        },
+        {
+            "key" : "columns",
+            "type" : "ArrayOfObject",
+            "necessary" : true,
+            "count_members" : "num_column",
+            "members" : [
+                {
+                    "key" : "name",
+                    "type" : "String",
+                    "necessary" : true
+                },
+                {
+                    "key" : "jname",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "connid",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "show",
+                    "type" : "Bool",
+                    "necessary" : true
+                },
+                {
+                    "key" : "description",
+                    "type" : "String",
+                    "necessary" : false
+                },
+                {
+                    "key" : "type",
+                    "type" : "String",
+                    "necessary" : false,
+                    "values" : ["String", "Integer", "Double", "List", "Datetime"]
+                },
+                {
+                    "key" : "num_key",
+                    "type" : "Integer",
+                    "necessary" : false
+                },
+                {
+                    "key" : "key_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                },
+                {
+                    "key" : "value_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                },
+                {
+                    "key" : "conn_attr_list",
+                    "type" : "ArrayOfString",
+                    "necessary" : false,
+                    "count_members" : "num_key"
+                }
+            ],
+            "exist_members": [
+                {
+                    "keys": ["num_key","key_list","value_list"],
+                    "ifkey": "type",
+                    "ifvalue" : "List",
+                    "necessary" : true
+                },
+                {
+                    "keys": ["connid","name"],
+                    "value": "name",
+                    "necessary" : true
+                },
+                {
+                    "keys": ["connid","name"],
+                    "value": "cityname",
+                    "necessary" : true
+                },
+                {
+                    "keys": ["connid","name"],
+                    "value": "status",
+                    "necessary" : true
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "status",
+                    "necessary" : false ,
+                    "values" : ["sup_req", "sup_arrgd", "supporting", "non_sup_req", "unknown", "other"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "kyoten",
+                    "necessary" : false,
+                    "values" : ["unspecified", "specified"]
+                },
+                {
+                    "keys" : ["conn_attr_list"],
+                    "ifkeys" : ["connid","name"],
+                    "ifvalue" : "toukai",
+                    "necessary" : false,
+                    "values" : ["no_fear", "fearful"]
+                }
+            ]
+        }
+    ],
+    "properties_value" : [
+        {
+            "connid" : "id",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "citycode",
+            "type" : "String",
+            "necessary" : false,
+            "string_formats" : ["^[0-9]{5}$"]
+        },
+        {
+            "connid" : "name",
+            "type" : "String",
+            "necessary" : true
+        },
+        {
+            "connid" : "namekana",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "phoneno",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "cityname",
+            "type" : "String",
+            "necessary" : true
+        },
+        {
+            "connid" : "address",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "status",
+            "type" : "List",
+            "necessary" : true,
+            "values" : ["支援要","支援手配済み","支援中","支援要請なし","不明","その他"]
+        },
+        {
+            "connid" : "kyoten",
+            "type" : "List",
+            "necessary" : false,
+            "values" : ["無","有"]
+        },
+        {
+            "connid" : "areaname",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "toukai",
+            "type" : "List",
+            "necessary" : false,
+            "values" : ["おそれなし","おそれあり"]
+        },
+        {
+            "connid" : "supplyinfo",
+            "type" : "String",
+            "necessary" : false
+        },
+        {
+            "connid" : "workbedno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "keepbedno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "seriousno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "middleno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "slightno",
+            "type" : "Integer",
+            "necessary" : false
+        },
+        {
+            "connid" : "note",
+            "type" : "String",
+            "necessary" : false
+        }
+    ]
+}

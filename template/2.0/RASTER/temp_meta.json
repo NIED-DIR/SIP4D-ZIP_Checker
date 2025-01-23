@@ -1,0 +1,299 @@
+{
+    "members": [
+        {
+            "key": "version",
+            "type": "String",
+            "values": ["2.0"],
+            "necessary": true
+        },
+        {
+            "key": "title",
+            "type": "String",
+            "necessary": true
+        },
+        {
+            "key": "ttid",
+            "type": "String",
+            "necessary": true,
+            "string_formats": ["^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$"]
+        },
+        {
+            "key": "code",
+            "type": "String",
+            "necessary": true,
+            "string_formats": ["^[0-9]{2}-[0-9]{3}-[0-9]{2}$","^[0-9]{4}-[0-9]{2}$"]
+        },
+        {
+            "key": "category",
+            "type": "String",
+            "necessary": true,
+            "values": [
+                "気象",
+                "地震",
+                "津波",
+                "土砂災害",
+                "洪水",
+                "火山",
+                "人的被害",
+                "建物被害",
+                "公共施設",
+                "交通",
+                "ライフライン",
+                "通信",
+                "燃料・エネルギー",
+                "SNS情報",
+                "画像・動画",
+                "避難",
+                "物資",
+                "医療",
+                "廃棄物",
+                "派遣",
+                "本部設置",
+                "法律適用",
+                "その他"
+            ]
+        },
+        {
+            "key": "tags",
+            "type": "ArrayOfString",
+            "necessary": true
+        },
+        {
+            "key": "format",
+            "type": "String",
+            "necessary": true,
+            "values": ["SIP4D-ZIP"]
+        },
+        {
+            "key": "payload_type",
+            "type": "String",
+            "necessary": true,
+            "values": ["RASTER"]
+        },
+        {
+            "key": "updated",
+            "type": "String",
+            "necessary": true,
+            "string_formats": ["^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$"]
+        },
+        {
+            "key": "information_date",
+            "type": "String",
+            "necessary": true,
+            "string_formats": ["^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$"]
+        },
+        {
+            "key": "author",
+            "type": "Object",
+            "necessary": true,
+            "members": [
+                {
+                    "key": "name",
+                    "type": "String",
+                    "necessary": true
+                },
+                {
+                    "key": "e-mail",
+                    "type": "String",
+                    "necessary": false,
+                    "string_formats": ["^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"]
+                }
+            ]
+        },
+        {
+            "key": "maintainer",
+            "type": "Object",
+            "necessary": true,
+            "members": [
+                {
+                    "key": "name",
+                    "type": "String",
+                    "necessary": true
+                },
+                {
+                    "key": "e-mail",
+                    "type": "String",
+                    "necessary": true,
+                    "string_formats": ["^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"]
+                }
+            ]
+        },
+        {
+            "key": "disaster",
+            "type": "Object",
+            "necessary": true,
+            "members": [
+                {
+                    "key": "name",
+                    "type": "String",
+                    "necessary": true
+                },
+                {
+                    "key": "id",
+                    "type": "String",
+                    "necessary": false
+                },
+                {
+                    "key": "report",
+                    "type": "Integer",
+                    "necessary": false,
+                    "min_value": 0,
+                    "max_value": 9999
+                }
+            ]
+        },
+        {
+            "key": "lgcode",
+            "type": "ArrayOfString",
+            "necessary": false,
+            "string_formats": ["^[0-9]{5}(,[0-9]{5})*$"]
+        },
+        {
+            "key": "openflg",
+            "type": "String",
+            "necessary": true,
+            "values": [
+                "ＩＳＵＴ－ＳＩＴＥのみ公開可能",
+                "災害対応機関のみ公開可能",
+                "一般公開可能"
+            ]
+        },
+        {
+            "key": "testflg",
+            "type": "String",
+            "necessary": true,
+            "values": [
+                "通常",
+                "訓練",
+                "試験"
+            ]
+        },
+        {
+            "key": "character",
+            "type": "String",
+            "necessary": true,
+            "values": ["UTF-8"]
+        },
+        {
+            "key": "remark",
+            "type": "String",
+            "necessary": false
+        },
+        {
+            "key": "license_id",
+            "type": "String",
+            "necessary": true,
+            "values": [
+                "cc-zero",
+                "cc-by",
+                "cc-by-sa",
+                "cc-nc",
+                "other-nc",
+                "other-closed"
+            ]
+        },
+        {
+            "key": "license_note",
+            "type": "String",
+            "necessary": false
+        },
+        {
+            "key": "credit",
+            "type": "ArrayOfString",
+            "necessary": false
+        },
+        {
+            "key": "note",
+            "type": "String",
+            "necessary": true
+        },
+        {
+            "key": "spatial",
+            "type": "Object",
+            "necessary": false,
+            "members": [
+                {
+                    "key" : "min_latitude",
+                    "type" : "Number",
+                    "necessary" : true
+                },
+                {
+                    "key" : "max_latitude",
+                    "type" : "Number",
+                    "necessary" : true
+                },
+                {
+                    "key" : "min_longitude",
+                    "type" : "Number",
+                    "necessary" : true
+                },
+                {
+                    "key" : "max_longitude",
+                    "type" : "Number",
+                    "necessary" : true
+                }
+            ]
+        },
+        {
+            "key": "entry_num",
+            "type": "Integer",
+            "necessary": true,
+            "min_value": 1
+        },
+        {
+            "key": "entry",
+            "type": "ArrayOfObject",
+            "necessary": true,
+            "count_members": "entry_num",
+            "members": [
+                {
+                    "key": "id",
+                    "type": "String",
+                    "necessary": false
+                },
+                {
+                    "key": "type",
+                    "type": "String",
+                    "necessary": true,
+                    "values": ["GeoTIFF"]
+                },
+                {
+                    "key": "title",
+                    "type": "String",
+                    "necessary": true
+                },
+                {
+                    "key": "file",
+                    "type": "String",
+                    "necessary": true,
+                    "file_exists": true
+                },
+                {
+                    "key": "information_date",
+                    "type": "String",
+                    "necessary": false,
+                    "string_formats": ["^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$"]
+                },
+                {
+                    "key": "updated",
+                    "type": "String",
+                    "necessary": true,
+                    "string_formats": ["^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$"]
+                }
+            ],
+            "exist_members": [
+                {
+                    "keys" : ["id","information_date"],
+                    "ifkey_p" : "entry_num",
+                    "ifminvalue_p" : 2,
+                    "necessary" : true
+                }
+            ]
+        },
+        {
+            "key": "extra",
+            "type": "Object",
+            "necessary": false
+        }
+    ]
+}

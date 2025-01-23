@@ -20,7 +20,8 @@
         {
             "key": "payload_type",
             "type": "String",
-            "necessary": false
+            "necessary": false,
+            "values": ["VECTOR","RASTER"]
         }
     ]
 }

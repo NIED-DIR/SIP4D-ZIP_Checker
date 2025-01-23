@@ -1,0 +1,159 @@
+{
+    "members": [
+        {
+            "key": "num_style",
+            "type": "Integer",
+            "necessary": true,
+            "min_value": 1
+        },
+        {
+            "key": "styles",
+            "type": "ArrayOfObject",
+            "necessary": true,
+            "count_members" : "num_style",
+            "members": [
+                {
+                    "key": "id",
+                    "type": "String",
+                    "necessary" : true
+                },
+                {
+                    "key": "name",
+                    "type": "String",
+                    "necessary" : false
+                },
+                {
+                    "key": "type",
+                    "type": "String",
+                    "necessary" : true,
+                    "values": ["Point", "Line", "Polygon"]
+                },
+                {
+                    "key": "num_class",
+                    "type": "Integer",
+                    "necessary" : true,
+                    "min_value": 1
+                },
+                {
+                    "key": "note",
+                    "type": "String",
+                    "necessary" : false
+                },
+                {
+                    "key": "column",
+                    "type": "String",
+                    "necessary" : false
+                },
+                {
+                    "key": "min_value",
+                    "type": "Number",
+                    "necessary" : false
+                },
+                {
+                    "key" : "classes",
+                    "type" : "ArrayOfObject",
+                    "necessary" : true,
+                    "count_members" : "num_class",
+                    "members" : [
+                        {
+                            "key" : "title",
+                            "type" : "String",
+                            "necessary" : true
+                        },
+                        {
+                            "key" : "value",
+                            "type" : "StrNum",
+                            "necessary" : false
+                        },
+                        {
+                            "key" : "symbol_type",
+                            "type" : "String",
+                            "necessary" : false,
+                            "values" : ["Image", "Circle"]
+                        },
+                        {
+                            "key" : "image",
+                            "type" : "String",
+                            "necessary" : false,
+                            "file_exists" : true
+                        },
+                        {
+                            "key": "color",
+                            "type": "String",
+                            "necessary": false,
+                            "string_formats" : ["^[0-9a-fA-F]{6}$"]
+                        },
+                        {
+                            "key": "stroke",
+                            "type": "Number",
+                            "necessary": false
+                        },
+                        {
+                            "key": "stroke_opacity",
+                            "type": "Number",
+                            "necessary": false,
+                            "min_value": 0,
+                            "max_value": 1
+                        },
+                        {
+                            "key": "fill",
+                            "type": "String",
+                            "necessary": false,
+                            "string_formats" : ["^[0-9a-fA-F]{6}$"]
+                        },
+                        {
+                            "key": "fill_opacity",
+                            "type": "Number",
+                            "necessary": false,
+                            "min_value": 0,
+                            "max_value": 1
+                        },
+                        {
+                            "key": "size",
+                            "type": "Number",
+                            "necessary": false
+                        }
+                    ],
+                    "exist_members": [
+                        {
+                            "keys" : ["symbol_type","size"],
+                            "ifkey_p": "type",
+                            "ifvalue_p": "Point",
+                            "necessary" : true
+                        },
+                        {
+                            "keys" : ["color","stroke"],
+                            "ifkey_p": "type",
+                            "ifvalue_p": "Line",
+                            "necessary" : true
+                        },
+                        {
+                            "keys" : ["color","stroke","fill"],
+                            "ifkey_p": "type",
+                            "ifvalue_p": "Polygon",
+                            "necessary" : true
+                        },
+                        {
+                            "keys" : ["value"],
+                            "ifkey_p" : "num_class",
+                            "ifminvalue_p" : 2,
+                            "necessary" : true
+                        },
+                        {
+                            "keys" : ["image","size"],
+                            "ifkey" : "symbol_type",
+                            "ifvalue" : "Image",
+                            "necessary" : true
+                        },
+                        {
+                            "keys" : ["color","stroke","fill","size"],
+                            "ifkey" : "symbol_type",
+                            "ifvalue" : "Circle",
+                            "necessary" : true
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
