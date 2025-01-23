@@ -293,7 +293,17 @@
         {
             "key": "extra",
             "type": "Object",
-            "necessary": false
+            "necessary": false,
+            "members":[
+                {
+                    "ng_keys" : ["author","author_email","creator_user_id","id","isopen","license_id","license_title",
+                        "license_url","maintainer","maintainer_email","metadata_created","metadata_modified",
+                        "name","notes","num_resources","num_tags","organization","owner_org","private",
+                        "state","title","type","url","version","extras","resources","tags","groups",
+                        "relationships_as_subject","relationships_as_object","disaster_id","disaster_name","disaster_report",
+                        "testflg","openflg","character","remark","credit","note","license_note","spatial","entry_num","entry","extra","information_date"]
+                }
+
         }
     ]
 }
