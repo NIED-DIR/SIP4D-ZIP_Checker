@@ -18,6 +18,7 @@ class Sip4dZipChecker:
     result = True                   # チェック結果
     geotype = 0                     # geometryタイプ 0x01:Point 0x02:LineString 0x04:Polygon 0x08:MultiPoint 0x10:MultiLineString 0x20:MultiPolygon
                                     # 複数のgeometryが混在している場合、複数のビットが立つ
+    geometry = ""                   # 属性定義ファイルで記述されているgeometryタイプの文字列（v2.0以降）
     version = ""                    # sip4d_zip_meta.json に記載されているバージョン
     code = ""                       # sip4d_zip_meta.json に記載されているコード
     payload_type = "VECTOR"         # sip4d_zip_meta.json に記載されているペイロードタイプ　デフォルトはVECTOR
@@ -42,6 +43,7 @@ class Sip4dZipChecker:
         self.filename = ""
         self.result = True
         self.geotype = 0
+        self.geometry = ""
         self.version = ""
         self.code = ""
         self.payload_type = "VECTOR"
@@ -129,6 +131,10 @@ class Sip4dZipChecker:
             if 'type' not in feature['geometry']:
                 self.result = ret = False
                 self.addMessage("[ERROR]features[" + str(cnt) + "].geometry.typeがありません")
+            # 属性定義のジオメトリタイプと一致するか
+            if self.geometry != "" and self.geometry != feature['geometry']['type']:
+                self.result = ret = False
+                self.addMessage("[ERROR]features[" + str(cnt) + "].geometry.typeが一致しません " + self.geometry + " != " + feature['geometry']['type'])
             # ジオメトリタイプを記録する
             if feature['geometry']['type'] == 'Point':
                 geotype = 0x01
@@ -727,6 +733,10 @@ class Sip4dZipChecker:
             else :
                 # 属性定義ファイルをチェックする
                 data = self.LoadJson(self.wrkPath() + columns_file, 'utf-8')
+                if data.get('type') is None:
+                    self.geometry = ""
+                else:
+                    self.geometry = data['type']
                 if self.CheckJsonFormat(data, temp) == False:
                     # 属性定義がエラーの場合、GeoJSONのプロパティチェックができないので、次のファイルへ
                     self.addMessage("[INFO]属性定義ファイルにエラーがあるため、地理空間ファイル: " + geofile + " のチェックをスキップします")
@@ -761,8 +771,7 @@ class Sip4dZipChecker:
             self.addMessage("[INFO]凡例ファイル: " + style_file + " をチェックします")
             data = self.LoadJson(self.wrkPath() + "/" + style_file, 'utf-8')
             if data is not None:
-                return self.CheckJsonFormat(data, columns)
-        
+                return self.CheckJsonFormat(data, columns)  
         return True
     
     # unzipする
