@@ -687,6 +687,9 @@ class Sip4dZipChecker:
         columns = self.LoadJson(self.templatePath() + "temp_meta.json", 'utf-8')
         # メタデータのフォーマットをチェック
         self.CheckJsonFormat(data, columns)
+        if self.result == False:
+            self.addMessage("[WARN]メタデータファイルにエラーがあるため、以降のチェックをスキップします")
+            return False
         self.title = data['title']
         self.author = data['author']['name']
         self.information_date = data['information_date']
@@ -729,7 +732,7 @@ class Sip4dZipChecker:
                 data = self.LoadJson(self.wrkPath() + columns_file, 'utf-8')
                 if self.CheckJsonFormat(data, temp) == False:
                     # 属性定義がエラーの場合、GeoJSONのプロパティチェックができないので、次のファイルへ
-                    self.addMessage("[INFO]属性定義ファイルにエラーがあるため、地理空間ファイル: " + geofile + " のチェックをスキップします")
+                    self.addMessage("[WARN]属性定義ファイルにエラーがあるため、地理空間ファイル: " + geofile + " のチェックをスキップします")
                     continue 
 
             # columns.jsonからpropertiesを作成
