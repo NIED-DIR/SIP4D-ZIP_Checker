@@ -687,13 +687,16 @@ class Sip4dZipChecker:
         columns = self.LoadJson(self.templatePath() + "temp_meta.json", 'utf-8')
         # メタデータのフォーマットをチェック
         self.CheckJsonFormat(data, columns)
-        if self.result == False:
-            self.addMessage("[WARN]メタデータファイルにエラーがあるため、以降のチェックをスキップします")
-            return False
-        self.title = data['title']
-        self.author = data['author']['name']
-        self.information_date = data['information_date']
-        self.disaster_name = data['disaster']['name']
+        if data.get('title') is not None:
+            self.title = data['title']
+        if data.get('author') is not None:
+            if data['author'].get('name') is not None:
+                self.author = data['author']['name']
+        if data.get('information_date') is not None:
+            self.information_date = data['information_date']
+        if data.get('disaster') is not None:
+            if data['disaster'].get('name') is not None:
+                self.disaster_name = data['disaster']['name']
         # 基本情報を表示
         self.addMessage("[INFO]フォーマット: SIP4D-ZIP")
         self.addMessage("[INFO]バージョン: " + self.version)
@@ -703,6 +706,10 @@ class Sip4dZipChecker:
         self.addMessage("[INFO]タイトル：" + self.title)
         self.addMessage("[INFO]著作者：" + self.author)
         self.addMessage("[INFO]情報日時：" + self.information_date)
+
+        if self.result == False:
+            self.addMessage("[WARN]メタデータファイルにエラーがあるため、以降のチェックをスキップします")
+            return False
 
         # 地理空間情報ファイルのリストを取得
         for entry in data['entry'] :
