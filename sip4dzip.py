@@ -341,32 +341,31 @@ class Sip4dZipChecker:
             if len(x) != temp['number']:
                 ret = False
         # 配列の要素をチェック
-        for value in x:
-            match value:
-                case str(y) :
-                    if temp['type'] != 'ArrayOfString':
+        for val in x:
+            if type(val) == str:
+                if temp['type'] != 'ArrayOfString':
+                    ret = False
+                elif not self._CheckString(val, temp):
+                    ret = False
+            elif type(val) ==  int :
+                if not(temp['type'] == 'ArrayOfInteger' or temp['type'] == 'ArrayOfNumber'):
+                    ret = False
+                elif not self._CheckInt(val, temp):
+                    ret = False
+            elif type(val) == float :
+                if not(temp['type'] != 'ArrayOfDouble' or temp['type'] == 'ArrayOfNumber'):
+                    ret = False
+                elif not self._CheckFloat(val, temp):
+                    ret = False
+            elif type(val) == bool :
+                if temp['type'] != 'ArrayOfBool':
+                    ret = False
+            elif type(val) == dict :
+                if temp['type'] != 'ArrayOfObject':
+                    ret = False
+                elif temp.get('members') is not None:
+                    if not self.CheckJsonFormat(val, temp, parent + "." + temp['key']):
                         ret = False
-                    elif not self._CheckString(y, temp):
-                        ret = False
-                case int(y) :
-                    if not(temp['type'] == 'ArrayOfInteger' or temp['type'] == 'ArrayOfNumber'):
-                        ret = False
-                    elif not self._CheckInt(y, temp):
-                        ret = False
-                case float(y) :
-                    if not(temp['type'] != 'ArrayOfDouble' or temp['type'] == 'ArrayOfNumber'):
-                        ret = False
-                    elif not self._CheckFloat(y, temp):
-                        ret = False
-                case bool(y) :
-                    if temp['type'] != 'ArrayOfBool':
-                        ret = False
-                case dict(y) :
-                    if temp['type'] != 'ArrayOfObject':
-                        ret = False
-                    elif temp.get('members') is not None:
-                        if not self.CheckJsonFormat(y, temp, parent + "." + temp['key']):
-                            ret = False
         return ret
 
     # 属性定義ファイルからGeoJSONのプロパティ定義に変換する
