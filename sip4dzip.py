@@ -445,16 +445,16 @@ class Sip4dZipChecker:
     # 型不明のデータ群が指定したvaluesであるかチェックする
     def _CheckValues(self, data: any, values: list):
         ret = True
-        match data:
-            case str(x) | int(x) | float(x) :
-                ret = False
-                for value in values:
-                    if x == value:
-                        ret = True
-            case list(x) :
-                for d in x:
-                    if not self._CheckValues(d, values) :
-                        ret = False
+        x = type(data)
+        if x is str | x is int | x is float :
+            ret = False
+            for value in values:
+                if x == value:
+                     ret = True
+        elif x is list :
+            for d in x:
+                if not self._CheckValues(d, values) :
+                    ret = False
         return ret
     
     # ArrayOfObjectから指定したconnidを検索する
@@ -570,79 +570,79 @@ class Sip4dZipChecker:
                     continue 
             
             # メンバのチェック
-            match target:
-                case str(x) :
-                    #typeチェック Stirng, StrNum
-                    if not(column['type'] == 'String' or column['type'] == 'StrNum'):
+            x = type(target)
+            if x is str :
+                #typeチェック Stirng, StrNum
+                if not(column['type'] == 'String' or column['type'] == 'StrNum'):
+                    self.result = ret = False
+                    self.addMessage("[ERROR]" + parent + "." + column['key'] + " の型が不正です " + column['type'] + "である必要があります")
+                    # エラーの場合、該当する地物のプロパティをメッセージに追加する
+                    self.addMessage(data.__str__())
+                    continue
+                if not self._CheckString(x, column):
+                    self.result = ret = False
+                    self.addMessage("[ERROR]" + parent + "." + column['key'] + " の値が不正です " + str(x))
+                if column.get('file_exists') is not None:
+                    if not os.path.exists(self.wrkPath()+"/"+ x):
                         self.result = ret = False
-                        self.addMessage("[ERROR]" + parent + "." + column['key'] + " の型が不正です " + column['type'] + "である必要があります")
-                        # エラーの場合、該当する地物のプロパティをメッセージに追加する
-                        self.addMessage(data.__str__())
-                        continue
-                    if not self._CheckString(x, column):
-                        self.result = ret = False
-                        self.addMessage("[ERROR]" + parent + "." + column['key'] + " の値が不正です " + str(x))
-                    if column.get('file_exists') is not None:
-                        if not os.path.exists(self.wrkPath()+"/"+ x):
-                            self.result = ret = False
-                            self.addMessage("[ERROR]" + parent + "." + column['key'] + " のファイルがありません " + str(x))
+                        self.addMessage("[ERROR]" + parent + "." + column['key'] + " のファイルがありません " + str(x))
 
-                case int(x) :
-                    #typeチェック Integer, Number, StrNum, Bool
-                    if not (column['type'] == 'Integer' or column['type'] == 'Number' or column['type'] == 'StrNum' or column['type'] == 'Bool'): 
-                        self.result = ret = False
-                        self.addMessage("[ERROR]" + parent + "." + column['key'] + " の型が不正です " + column['type'] + "である必要があります")
-                        # エラーの場合、該当する地物のプロパティをメッセージに追加する
-                        self.addMessage(data.__str__())
-                        continue
-                    if not self._CheckInt(x, column):
-                        self.result = ret = False
-                        self.addMessage("[ERROR]" + parent + "." + column['key'] + " の値が不正です " + str(x))
+            elif x is int :
+                #typeチェック Integer, Number, StrNum, Bool
+                if not (column['type'] == 'Integer' or column['type'] == 'Number' or column['type'] == 'StrNum' or column['type'] == 'Bool'): 
+                    self.result = ret = False
+                    self.addMessage("[ERROR]" + parent + "." + column['key'] + " の型が不正です " + column['type'] + "である必要があります")
+                    # エラーの場合、該当する地物のプロパティをメッセージに追加する
+                    self.addMessage(data.__str__())
+                    continue
+                if not self._CheckInt(x, column):
+                    self.result = ret = False
+                    self.addMessage("[ERROR]" + parent + "." + column['key'] + " の値が不正です " + str(x))
 
-                case float(x) :
-                    #typeチェック Double, Number, StrNum
-                    if not (column['type'] == 'Double' or column['type'] == 'Number' or column['type'] == 'StrNum'):
-                        self.result = ret = False
-                        self.addMessage("[ERROR]" + parent + "." + column['key'] + " の型が不正です " + column['type'] + "である必要があります")
-                        # エラーの場合、該当する地物のプロパティをメッセージに追加する
-                        self.addMessage(data.__str__())
-                        continue
-                    if self._CheckFloat(x, column):
-                        self.result = ret = False
-                        self.addMessage("[ERROR]" + parent + "." + column['key'] + " の値が不正です " + str(x))
+            elif x is float :
+                #typeチェック Double, Number, StrNum
+                if not (column['type'] == 'Double' or column['type'] == 'Number' or column['type'] == 'StrNum'):
+                    self.result = ret = False
+                    self.addMessage("[ERROR]" + parent + "." + column['key'] + " の型が不正です " + column['type'] + "である必要があります")
+                    # エラーの場合、該当する地物のプロパティをメッセージに追加する
+                    self.addMessage(data.__str__())
+                    continue
+                if self._CheckFloat(x, column):
+                    self.result = ret = False
+                    self.addMessage("[ERROR]" + parent + "." + column['key'] + " の値が不正です " + str(x))
  
-                case dict(x) :
-                    #typeチェック Object
-                    if column['type'] != 'Object':
-                        self.result = ret = False
-                        self.addMessage("[ERROR]" + parent + "." + column['key'] + " の型が不正です " + str(x))
-                        continue
-                    if column.get('members') is not None:
-                        # Objectなら再起呼び出し
-                        if self.CheckJsonFormat(x, column, parent + "." + column['key']) == False:
-                            ret = False
+            elif x is dict :
+                #typeチェック Object
+                if column['type'] != 'Object':
+                    self.result = ret = False
+                    self.addMessage("[ERROR]" + parent + "." + column['key'] + " の型が不正です " + str(x))
+                    continue
+                if column.get('members') is not None:
+                    # Objectなら再起呼び出し
+                    if self.CheckJsonFormat(x, column, parent + "." + column['key']) == False:
+                        ret = False
 
-                case list(x) :
-                    #typeチェック ArrayOfObject, ArrayOfString, ArrayOfBool, ArrayOfInt, ArrayOfDouble, ArrayOfNumber
-                    if column['type'] != 'ArrayOfObject' and column['type'] != 'ArrayOfString' and column['type'] != 'ArrayOfBool' and \
-                    column['type'] != 'ArrayOfInteger' and column['type'] != 'ArrayOfDouble' and column['type'] != 'ArrayOfNumber':
-                        self.result = ret = False
-                        self.addMessage("[ERROR]" + parent + "." + column['key'] + " の型が不正です " + column['type'])
-                    #要素数チェック
-                    if column.get('count_members') is not None:
-                        num = column['count_members']
-                        if data.get(num) is not None:
-                            c = data[column['count_members']]
-                            if c != len(x):
-                                self.result = ret = False
-                                self.addMessage("[ERROR]要素数が不正です " + parent + "." + column['key'] + " = " + str(len(x)) + " " + num + "=" + str(c))
-                    # 配列の要素をチェック
-                    if not self._CheckArray(x, column, parent):
-                        self.result = ret = False
-                    # 要素の存在チェック
-                    if column.get('exist_members') is not None and column.get('type') == 'ArrayOfObject':
-                        if self._ExistMembers(data, target, column, parent) == False:
-                            ret = False
+            elif x is list :
+                #typeチェック ArrayOfObject, ArrayOfString, ArrayOfBool, ArrayOfInt, ArrayOfDouble, ArrayOfNumber
+                if column['type'] != 'ArrayOfObject' and column['type'] != 'ArrayOfString' and column['type'] != 'ArrayOfBool' and \
+                column['type'] != 'ArrayOfInteger' and column['type'] != 'ArrayOfDouble' and column['type'] != 'ArrayOfNumber':
+                    self.result = ret = False
+                    self.addMessage("[ERROR]" + parent + "." + column['key'] + " の型が不正です " + column['type'])
+                #要素数チェック
+                if column.get('count_members') is not None:
+                    num = column['count_members']
+                    if data.get(num) is not None:
+                        c = data[column['count_members']]
+                        if c != len(x):
+                            self.result = ret = False
+                            self.addMessage("[ERROR]要素数が不正です " + parent + "." + column['key'] + " = " + str(len(x)) + " " + num + "=" + str(c))
+                # 配列の要素をチェック
+                if not self._CheckArray(x, column, parent):
+                    self.result = ret = False
+                # 要素の存在チェック
+                if column.get('exist_members') is not None and column.get('type') == 'ArrayOfObject':
+                    if self._ExistMembers(data, target, column, parent) == False:
+                        ret = False
 
 
             # 禁止されている要素名がないかチェック
