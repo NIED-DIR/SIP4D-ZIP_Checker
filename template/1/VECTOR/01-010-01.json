@@ -6,6 +6,12 @@
             "necessary": true
         },
         {
+            "key": "code",
+            "type": "String",
+            "necessary": true,
+            "values": ["01-010-01"]
+        },
+        {
             "key": "num_column",
             "type": "Integer",
             "necessary": true,
