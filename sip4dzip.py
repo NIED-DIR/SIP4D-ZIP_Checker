@@ -452,7 +452,7 @@ class Sip4dZipChecker:
                 if x == value:
                      ret = True
         elif x is list :
-            for d in x:
+            for d in data:
                 if not self._CheckValues(d, values) :
                     ret = False
         return ret
