@@ -448,7 +448,7 @@ class Sip4dZipChecker:
         if type(data) == str or type(data) == int or type(data) == float :
             ret = False
             for value in values:
-                if type(data) == value:
+                if data == value:
                      ret = True
         elif type(data) == list :
             for d in data:
