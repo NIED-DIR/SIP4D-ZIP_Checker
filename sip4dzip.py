@@ -445,13 +445,12 @@ class Sip4dZipChecker:
     # 型不明のデータ群が指定したvaluesであるかチェックする
     def _CheckValues(self, data: any, values: list):
         ret = True
-        x = type(data)
-        if x is str | x is int | x is float :
+        if type(data) == str or type(data) == int or type(data) == float :
             ret = False
             for value in values:
-                if x == value:
+                if data == value:
                      ret = True
-        elif x is list :
+        elif type(data) == list :
             for d in data:
                 if not self._CheckValues(d, values) :
                     ret = False
