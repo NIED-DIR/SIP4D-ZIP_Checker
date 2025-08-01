@@ -18,4 +18,6 @@ setup(
         "setuptools",
         "zipfile36; python_version<'3.8'",
     ],
+    long_description=open('README.md').read(),
+    long_description_content_type="text/markdown",
 )
