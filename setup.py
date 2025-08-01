@@ -16,6 +16,5 @@ setup(
     package_data={"Sip4dzipChecker": ["template/**/*"]},
     install_requires=[
         "setuptools",
-        "zipfile36; python_version<'3.8'",
     ],
 )

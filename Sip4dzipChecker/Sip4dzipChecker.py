@@ -33,7 +33,9 @@ class Sip4dzipChecker:
     max_lng = 0.0                                   # 経度の最大値
     min_lat = 0.0                                   # 緯度の最小値
     max_lat = 0.0                                   # 緯度の最大値
-    _datetime_formats = ["^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+){0,1}[zZ]{0,1}$"]
+    
+    _properties_format = "^[a-z0-9_]+$"             # プロパティのフォーマット（小文字英数字とアンダースコアのみ）
+    _datetime_format = "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+){0,1}[Z]{0,1}$"
 
     def __init__(self):
         self.report_dir = ""
@@ -278,8 +280,12 @@ class Sip4dzipChecker:
             self.addMessage("[ERROR]プロパティが不正です")
             return False
         r1 = self.checkJsonFormat(properties, temp, "features["+ str(no) +"].properties")
-        # 属性定義されていないプロパティがあるか
         for key in properties:
+            # プロパティのフォーマットチェック
+            if not re.match(self._properties_format, key):
+                self.result = False
+                self.addMessage("[ERROR]プロパティのフォーマットが不正です features[" + str(no) + "].properties." + key)
+            # 属性定義されていないプロパティがあるか
             if not self._findKey(temp['members'], key):
                 #エラーにしない
                 self.addMessage("[WARN]属性定義ファイルで未定義のプロパティがあります features[" + str(no) + "].properties." + key)
@@ -403,7 +409,7 @@ class Sip4dzipChecker:
                 if column['type'] == 'Datetime' :
                     d['type'] = 'String'
                     # 日付フォーマットを追加
-                    d['string_formats'] = self._datetime_formats
+                    d['string_formats'] = [self._datetime_format]
             if t is not None:
                 # テンプレートのproperties_valueでGeoJSONのプロパティチェック設定を補強する
                 if t.get('type') is not None and d.get('type') is None:
