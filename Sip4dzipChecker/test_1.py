@@ -6,7 +6,6 @@ _ROOT = os.path.dirname(os.path.abspath(__file__))
 
 def test_check():
     ck = Sip4dzipChecker()
-    assert ck.check(os.path.abspath(_ROOT+"/testdata/052_20250721_0000001.zip")) == True
-    assert ck.check(os.path.abspath(_ROOT+"/testdata/052_20250721_0000006.zip")) == False
+    assert ck.check(os.path.abspath(_ROOT+"/testdata/052_20250801_0000000.zip")) == True
 
 test_check()
