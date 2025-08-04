@@ -28,7 +28,7 @@ class Sip4dzipChecker:
     author = ""                                     # sip4d_zip_meta.json に記載されている著作者
     information_date = ""                           # sip4d_zip_meta.json に記載されている情報日時
     disaster_name = ""                              # sip4d_zip_meta.json に記載されている災害名
-    geofiles = []                                   # 地理空間情報ファイルのリスト
+    entrys = []                                     # メタデータのエントリ
     min_lng = 0.0                                   # 経度の最小値
     max_lng = 0.0                                   # 経度の最大値
     min_lat = 0.0                                   # 緯度の最小値
@@ -56,7 +56,7 @@ class Sip4dzipChecker:
         self.author = ""
         self.information_date = ""
         self.disaster_name = ""
-        self.geofiles = []
+        self.entrys = []
         self.min_lng = 0.0
         self.max_lng = 0.0
         self.min_lat = 0.0
@@ -721,8 +721,7 @@ class Sip4dzipChecker:
             return False
 
         # 地理空間情報ファイルのリストを取得
-        for entry in data['entry'] :
-            self.geofiles.append(entry['file'])
+        self.entrys = data.get('entry', [])
         
         # entry数とファイル数が一致するか
         if len(data['entry']) != data['entry_num']:
@@ -733,12 +732,14 @@ class Sip4dzipChecker:
 
 
     # 属性定義ファイルと地理空間情報ファイルのチェック
-    def checkColumnsAndGeoDataFile_VECTOR(self, temp: dict):
+    def checkColumnsAndGeoDataFile_VECTOR(self):
         data: dict
         # 地理空間情報ファイルのリストを取得
-        for geofile in self.geofiles:
+        for entry in self.entrys:
+            geofile = entry['file']
             columns_file = os.path.splitext(geofile)[0] + "_columns.json"
             self.addMessage( "[INFO]属性定義ファイル: " + columns_file + " をチェックします")
+            columns_version = "1"
             if not os.path.exists(self.wrkPath() + columns_file):
                 self.result = False
                 self.addMessage("[ERROR]属性定義ファイルがありません " + columns_file)
@@ -746,10 +747,18 @@ class Sip4dzipChecker:
             else :
                 # 属性定義ファイルをチェックする
                 data = self.loadJson(self.wrkPath() + columns_file, 'utf-8')
+                # 属性定義ファイルのバージョンを取得
+                columns_version = data.get('version', '1')
+                self.addMessage("[INFO]属性定義ファイルのバージョン: " + str(columns_version))
+                temp = self.readTemplateFile(columns_version)
                 if self.checkJsonFormat(data, temp) == False:
                     # 属性定義がエラーの場合、GeoJSONのプロパティチェックができないので、次のファイルへ
                     self.addMessage("[WARN]属性定義ファイルにエラーがあるため、地理空間ファイル: " + geofile + " のチェックをスキップします")
-                    continue 
+                    continue
+                # テンプレートファイルにdo_not_check_payload_filesがある場合は、ペイロードファイルのチェックを行わない
+                if temp.get('do_not_check_payload_files') is not None:
+                    self.addMessage("[INFO]ペイロードファイルのチェックを行いません")
+                    continue
 
             # columns.jsonからpropertiesを作成
             propertys = self._convertColumns(data, temp.get('properties_value'))
@@ -770,7 +779,8 @@ class Sip4dzipChecker:
         columns = self.loadJson(self.templatePath() + "temp_style.json", 'utf-8')
 
         # 地理空間情報ファイルのリストを取得
-        for geofile in self.geofiles:
+        for entry in self.entrys:
+            geofile = entry['file']
             style_file = os.path.splitext(geofile)[0] + "_style.json"
             # スタイルファイルが存在するか
             if not os.path.exists(self.wrkPath() + style_file):
@@ -798,30 +808,23 @@ class Sip4dzipChecker:
         self.addMessage("[INFO]SIP4D-ZIPを展開しました " + self.wrkPath())   
         return True
 
-    # UNZIPしたSIP4D-ZIPをチェックする
-    def checkUnzipFiles(self):
-        # メタファイルのチェック
-        if self.checkMetaFile() :
-            if self.payload_type == "VECTOR":
-                temp : dict
-                if os.path.exists(self.templatePath() + self.code + ".json"):
-                    # 情報種別コードに対応する属性定義ファイルがある場合
-                    self.addMessage("[INFO]テンプレートファイル: " + self.code + ".json を読み込みます")
-                    temp = self.loadJson(self.templatePath() + self.code + ".json", 'utf-8')
-                else:
-                    # 汎用の属性定義ファイルを読み込む
-                    self.addMessage("[INFO]テンプレートファイル: temp_column.json を読み込みます")
-                    temp = self.loadJson(self.templatePath() + "temp_column.json", 'utf-8')
+    # テンプレートファイルの読み込み
+    def readTemplateFile(self, columns_version: str):
+        ret : dict
+        if os.path.exists(self.templatePath() + self.code + "." + columns_version + ".json"):
+            # 情報種別コードに対応する属性定義ファイルがある場合
+            self.addMessage("[INFO]テンプレートファイル: " + self.code + "." + columns_version + ".json を読み込みます")
+            ret = self.loadJson(self.templatePath() + self.code + "." + columns_version + ".json", 'utf-8')
+        elif os.path.exists(self.templatePath() + self.code + ".json"):
+            # 情報種別コードに対応する属性定義ファイルがある場合
+            self.addMessage("[INFO]テンプレートファイル: " + self.code + ".json を読み込みます")
+            ret = self.loadJson(self.templatePath() + self.code + ".json", 'utf-8')
+        else:
+            # 汎用の属性定義ファイルを読み込む
+            self.addMessage("[INFO]テンプレートファイル: temp_column.json を読み込みます")
+            ret = self.loadJson(self.templatePath() + "temp_column.json", 'utf-8')
+        return ret
 
-                # テンプレートファイルにdo_not_check_payload_filesがある場合は、ペイロードファイルのチェックを行わない
-                if temp.get('do_not_check_payload_files') is None:
-                    # 属性定義ファイルのチェック
-                    self.checkColumnsAndGeoDataFile_VECTOR(temp) 
-                    # スタイルファイルのチェック
-                    self.checkStyleFile()
-                else:
-                    self.addMessage("[WARN]***ペイロードファイルのチェックを行いません***")
-            
 
     # チェック開始
     # zip_file: ZIPファイル名
@@ -843,7 +846,9 @@ class Sip4dzipChecker:
             if not self.unzip(zip_file):
                 return False
             # 展開したファイルをチェック
-            self.checkUnzipFiles()
+            if self.checkMetaFile():
+                if self.payload_type == "VECTOR":
+                    self.checkColumnsAndGeoDataFile_VECTOR()
             # 終了時刻を表示
             self.addMessage("[INFO]終了時刻: " + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
             # チェック結果
