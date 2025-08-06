@@ -8,4 +8,8 @@ def test_check():
     ck = Sip4dzipChecker()
     assert ck.check(os.path.abspath(_ROOT+"/testdata/052_20250801_0000000.zip")) == True
 
-test_check()
+def test_utf8_bom():
+    ck = Sip4dzipChecker()
+    # BOM付UTF-8のJSONファイルを読み込んでエラーになればOK
+    assert ck.loadJson(os.path.abspath(_ROOT+"/testdata/utf8bom.json")) == None
+

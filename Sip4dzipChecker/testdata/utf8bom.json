@@ -1,0 +1,43 @@
+﻿{
+    "payload_type": "VECTOR",
+    "note": "実動機関による道路被害情報",
+    "openflg": "災害対応機関のみ公開可能",
+    "code": "99-999-99",
+    "author": {
+        "name": "陸上自衛隊東北方面隊",
+        "e-mail": "info@example.jp"
+    },
+    "information_date": "2025-07-15T14:43:00",
+    "format": "SIP4D-ZIP",
+    "remark": "",
+    "entry_num": 1,
+    "license_note": "",
+    "title": "道路被害",
+    "version": "1.1",
+    "ttid": "5363bffc-5ac8-37ba-905a-7634e2c0060a",
+    "maintainer": {
+        "name": "陸上自衛隊東北方面隊",
+        "e-mail": "info@example.jp"
+    },
+    "disaster": {
+        "name": "07JXR 2025/07/15 午後",
+        "id": "1188"
+    },
+    "tags": [
+        "SIP4D-Xedge"
+    ],
+    "entry": [
+        {
+            "file": "c28388_pub.geojson",
+            "type": "GeoJSON",
+            "title": "道路被害",
+            "updated": "2025-08-01T15:18:23"
+        }
+    ],
+    "character": "UTF-8",
+    "license_id": "cc-by",
+    "testflg": "訓練",
+    "category": "交通",
+    "credit": [],
+    "updated": "2025-08-01T15:18:23"
+}
