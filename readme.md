@@ -1,16 +1,18 @@
 # 使い方
 SIP4D-ZIPのフォーマットチェックを行うツールです。
-```
-$ python3 sip4dzip_check.py [入力パス] 
+```python
+from Sip4dzipChecker import Sip4dzipChecker
+checker = Sip4dzipChecker()
+checker.check("チェック対象のZIPファイルまたはフォルダ")
 ```
 * 入力パス
     * チェック対象のZIPファイルまたはフォルダ
     * フォルダを指定した場合、フォルダ内の全てのZIPファイルをチェック対象とします。また、サブフォルダも再帰的にチェックします
-* 出力
+* 出力（戻り値）
     * チェック結果を標準出力に表示します
-    * チェック結果をステータスコードで返します（注意：フォルダを指定した場合、最後にチェックしたZIPファイルのステータスコードを返します）
-        * 0: 正常終了
-        * 1: エラー終了
+    * フォルダを指定した場合、チェック結果は最後にチェックしたZIPファイルの結果を返します
+        * True: 正常終了
+        * False: エラー終了
 
 :warning: SIP4D-ZIPの仕様については、[災害情報共有のための共通データフレームワーク－SIP4D-ZIP](https://webdesk.jsa.or.jp/books/W11M0090/index/?bunsyo_id=JSA-S1016%3A2023)を参照してください。
 
