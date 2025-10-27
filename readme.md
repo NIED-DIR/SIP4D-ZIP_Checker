@@ -1,9 +1,20 @@
-# 使い方
-SIP4D-ZIPのフォーマットチェックを行うツールです。
+
+# SIP4D-ZIPのフォーマットチェック
+## インストール
+```python
+pip install .
+```
+## 使い方
+
 ```python
 from Sip4dzipChecker import Sip4dzipChecker
 checker = Sip4dzipChecker()
 checker.check("チェック対象のZIPファイルまたはフォルダ")
+
+if checker.result:
+    print("SIP4D-ZIPのフォーマットチェックに合格しました")
+else:
+    print("SIP4D-ZIPのフォーマットチェックに不合格です")
 ```
 * 入力パス
     * チェック対象のZIPファイルまたはフォルダ
@@ -13,12 +24,44 @@ checker.check("チェック対象のZIPファイルまたはフォルダ")
     * フォルダを指定した場合、チェック結果は最後にチェックしたZIPファイルの結果を返します
         * True: 正常終了
         * False: エラー終了
+* プロパティ
+    * チェック結果をメンバ変数に格納します(フォルダを指定した場合は、最後にチェックしたZIPファイルの結果）
+        * checker.version: SIP4D-ZIPのバージョン
+        * checker.payload_type: ペイロードタイプ
+        * checker.author: 作成者
+        * checker.title: タイトル
+        * checker.min_lat: 最小緯度
+        * checker.min_lng: 最小経度
+        * checker.max_lat: 最大緯度
+        * checker.max_lng: 最大経度
+        * checker.code : 情報種別コード
+        * checker.information_date: 情報日時
+        * checker.disaster_name: 災害名
 
 :warning: SIP4D-ZIPの仕様については、[災害情報共有のための共通データフレームワーク－SIP4D-ZIP](https://webdesk.jsa.or.jp/books/W11M0090/index/?bunsyo_id=JSA-S1016%3A2023)を参照してください。
 
 # SIP4D-ZIP Webchecker
 本ツールを使用したWebチェッカーを以下のURLで公開しています。
 * [SIP4D-ZIP Webchecker](https://sip4dkit-web.bosai.go.jp/checker/)
+
+# おまけツール
+* to_multi.py
+    * GeoJSONのジオメトリをMulti系に変換するツール
+    * point → multipoint, linestring → multilinestring, polygon → multipolygon に変換します
+    * 使い方
+    ```bash 
+    > python to_multi.py 入力GeoJSONファイル 出力GeoJSONファイル
+    ```
+* gsi2simple.py
+    * 国土地理院地図のエクスポートファイル（GeoJSON）を、シンプルなGeoJSONに変換するツール
+    * 入力ファイルのプロパティに含まれる不要な情報を削除することで、シンプルなGeoJSONに変換します
+    * 削除対象のプロパティ
+        * List型のプロパティ
+        * Dict型のプロパティ
+    * 使い方
+    ```bash 
+    > python gsi2simple.py 入力シンプルJSONファイル 出力GeoJSONファイル
+    ```
 # 設定ファイル
 templateフォルダにフォーマットチェックの設定ファイルを配置します。  
 templateフォルダ直下にtemp_meta.jsonが配置してあり、このファイルを使用してメタデータファイルの初期チェックを行います。初期チェックによって、バージョン、ペイロードタイプ、情報種別コードを読み取り、サブフォルダに格納されているテンプレートファイルを使用し、改めて詳細なフォーマットチェックを行います。
