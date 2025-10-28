@@ -9,9 +9,9 @@ pip install .
 ```python
 from Sip4dzipChecker import Sip4dzipChecker
 checker = Sip4dzipChecker()
-checker.check("チェック対象のZIPファイルまたはフォルダ")
+result = checker.check("チェック対象のZIPファイルまたはフォルダ")
 
-if checker.result:
+if result:
     print("SIP4D-ZIPのフォーマットチェックに合格しました")
 else:
     print("SIP4D-ZIPのフォーマットチェックに不合格です")
