@@ -95,7 +95,6 @@ class Sip4dzipChecker:
                 if ret == None:
                     self.result = False
                     self.addMessage("[ERROR]JSONファイルの読み込みに失敗しました " + filename)
-                    self.addMessage("[ERROR]不正な形式もしくは、BOM付きUTF-8の可能性があります")
                 return ret
             except UnicodeDecodeError as e:
                 self.result = False
@@ -104,6 +103,7 @@ class Sip4dzipChecker:
             except json.JSONDecodeError as e:
                 self.result = False
                 self.addMessage("[ERROR]JSONデコードに失敗しました " + filename)
+                self.addMessage("[ERROR]不正な形式もしくは、BOM付きUTF-8の可能性があります")
                 return None
 
 
