@@ -91,7 +91,12 @@ class Sip4dzipChecker:
     def loadJson(self, filename: str, encoding='utf-8'):
         with open(filename, 'r', encoding=encoding) as file:
             try:
-                return json.load(file)
+                ret = json.load(file)
+                if ret == None:
+                    self.result = False
+                    self.addMessage("[ERROR]JSONファイルの読み込みに失敗しました " + filename)
+                    self.addMessage("[ERROR]不正な形式もしくは、BOM付きUTF-8の可能性があります")
+                return ret
             except UnicodeDecodeError as e:
                 self.result = False
                 self.addMessage("[ERROR]ファイルの文字コードが不正です " + filename)
@@ -667,6 +672,8 @@ class Sip4dzipChecker:
     def checkMetaFile(self):
         # 初期チェックのテンプレートを読み込む
         columns = self.loadJson( str(self.template_root) + "/temp_meta.json", 'utf-8')
+        if columns is None:
+            return False
 
         #　メタファイルが存在するか
         if not os.path.exists(self.wrkPath() + "sip4d_zip_meta.json"):
@@ -675,6 +682,8 @@ class Sip4dzipChecker:
             return False
         #　メタファイルのフォーマット概要をチェック（バージョン番号、コード、ペイロードタイプがあるか）
         data = self.loadJson(self.wrkPath() + "sip4d_zip_meta.json", 'utf-8')
+        if data is None:
+            return False
         self.checkJsonFormat(data, columns)
         
         # 初期チェックでエラーがあった場合は、以降のチェックは行わない（テンプレートファイルを参照できなくなるので）
@@ -694,6 +703,8 @@ class Sip4dzipChecker:
         #　バージョン別のテンプレートを読み込む
         self.addMessage("[INFO]メタデータファイルをチェックします sip4d_zip_meta.json")
         columns = self.loadJson(self.templatePath() + "temp_meta.json", 'utf-8')
+        if columns is None:
+            return False
         # メタデータのフォーマットをチェック
         self.checkJsonFormat(data, columns)
         if data.get('title') is not None:
@@ -747,6 +758,8 @@ class Sip4dzipChecker:
             else :
                 # 属性定義ファイルをチェックする
                 data = self.loadJson(self.wrkPath() + columns_file, 'utf-8')
+                if data is None:
+                    return False
                 # 属性定義ファイルのバージョンを取得
                 columns_version = data.get('version', '1')
                 self.addMessage("[INFO]属性定義ファイルのバージョン: " + str(columns_version))
