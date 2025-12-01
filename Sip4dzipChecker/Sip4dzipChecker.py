@@ -240,12 +240,14 @@ class Sip4dzipChecker:
                     return False
                 else:
                     for coord in polygon:
-                        return self._checkLatLng(coord, no)
+                        if not self._checkLatLng(coord, no):
+                            return False
                 # 最初の座標と最後の座標が同じかどうか
                 if polygon[0] != polygon[-1]:
                     self.result = False
                     self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates Polygonの最初の座標と最後の座標が異なります")
                     return False
+            return True
         # 未定義
         self.result = False
         self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates 不明なジオメトリタイプです")
