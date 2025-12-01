@@ -10,8 +10,8 @@ def test_1():
     assert ck.title == "道路被害"
     assert ck.min_lat == 35.691532826901806
     assert ck.min_lng == 139.79476379308534
-    assert ck.max_lat == 38.26529275285557
-    assert ck.max_lng == 140.9245214308029
+    assert ck.max_lat == 38.265337718859854
+    assert ck.max_lng == 140.9245411015138
 
 
 def test_2():

@@ -9,7 +9,7 @@ setup(
     author="NIED-DIR",
     author_email="sip4d_info@bosai.go.jp",
     url="https://github.com/NIED-DIR/SIP4D-ZIP_Checker",
-    version="1.2.0",
+    version="1.2.1",
     description="SIP4D-ZIP Checker",
     license="MIT",
     packages=find_packages(),
