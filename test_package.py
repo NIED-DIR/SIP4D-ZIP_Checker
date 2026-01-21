@@ -23,3 +23,8 @@ def test_3():
     ck = Sip4dzipChecker()
     # BOM付UTF-8のJSONファイルを含むZIPファイルを読み込んでエラーになればOK
     assert ck.check(os.path.abspath(_ROOT+"/Sip4dzipChecker/testdata/bomtest.zip")) == False
+
+def test_4():
+    ck = Sip4dzipChecker()
+    # スタイルファイルにエラー（必須項目がない）がある
+    assert ck.check(os.path.abspath(_ROOT+"/Sip4dzipChecker/testdata/polygon_style_err_sample.zip")) == False

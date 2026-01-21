@@ -10,4 +10,8 @@ def test_2():
     ck = Sip4dzipChecker()
     assert ck.check(os.path.abspath(_ROOT + "/testdata/052_20250801_0000000.zip")) == True
 
-test_2()
+def test_3():
+    ck = Sip4dzipChecker()
+    assert ck.check(os.path.abspath(_ROOT + "/testdata/polygon_style_err_sample.zip")) == False
+
+test_3()

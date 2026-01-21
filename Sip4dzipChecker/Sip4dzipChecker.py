@@ -538,7 +538,7 @@ class Sip4dzipChecker:
                             if member.get(key) is None and m['necessary']:
                                 ret = False
                                 self.result = False
-                                self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "["+ str(cnt) +"]." + key +" (上位."+ m['ifkey_p'] + " = " + m['ifvalue_p'] + ")")
+                                self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "["+ str(cnt) +"]." + key +" ("+ m['ifkey_p'] + " = " + m['ifvalue_p'] + ")")
                             cnt += 1
             if m.get('ifkey_p') is not None and m.get('ifminvalue_p') is not None:
                 # ifkey_p=ifvalue_pのペアが存在するか？
@@ -549,7 +549,7 @@ class Sip4dzipChecker:
                             if member.get(key) is None and m['necessary']:
                                 ret = False
                                 self.result = False
-                                self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "["+ str(cnt) +"]." + key +" (上位."+ m['ifkey_p'] + " = " + str(data[m['ifkey_p']]) + ")")
+                                self.addMessage("[ERROR]必須要素がありません " + parent + "." + temp['key'] + "["+ str(cnt) +"]." + key +" ("+ m['ifkey_p'] + " = " + str(data[m['ifkey_p']]) + ")")
                             cnt += 1
         return ret
 
@@ -745,7 +745,7 @@ class Sip4dzipChecker:
 
 
     # 属性定義ファイルと地理空間情報ファイルのチェック
-    def checkColumnsAndGeoDataFile_VECTOR(self):
+    def checkVector(self):
         data: dict
         # 地理空間情報ファイルのリストを取得
         for entry in self.entrys:
@@ -756,42 +756,51 @@ class Sip4dzipChecker:
             if not os.path.exists(self.wrkPath() + columns_file):
                 self.result = False
                 self.addMessage("[ERROR]属性定義ファイルがありません " + columns_file)
-                continue
             else :
                 # 属性定義ファイルをチェックする
                 data = self.loadJson(self.wrkPath() + columns_file, 'utf-8')
-                if data is None:
-                    return False
-                # 属性定義ファイルのバージョンを取得
-                columns_version = data.get('version', '1')
-                self.addMessage("[INFO]属性定義ファイルのバージョン: " + str(columns_version))
-                temp = self.readTemplateFile(columns_version)
-                if self.checkJsonFormat(data, temp) == False:
-                    # 属性定義がエラーの場合、GeoJSONのプロパティチェックができないので、次のファイルへ
-                    self.addMessage("[WARN]属性定義ファイルにエラーがあるため、地理空間ファイル: " + geofile + " のチェックをスキップします")
-                    continue
-                # テンプレートファイルにdo_not_check_payload_filesがある場合は、ペイロードファイルのチェックを行わない
-                if temp.get('do_not_check_payload_files') is not None:
-                    self.addMessage("[INFO]ペイロードファイルのチェックを行いません")
-                    continue
-
-            # columns.jsonからpropertiesを作成
-            propertys = self._convertColumns(data, temp.get('properties_value'))
-            # 地理空間情報ファイルをチェックする
-            self.addMessage("[INFO]地理空間ファイル: " + geofile + " をチェックします")
-            self.geotype = 0
-            data = self.loadJson(self.wrkPath() + geofile, 'utf-8')
-            if data is None:
-                return False
-            if not self.checkGeojson(data, propertys):
-                return False
-            self.addMessage("[INFO]座標範囲: ( " + str(self.min_lng) + " , " + str(self.min_lat) + " )-( " + str(self.max_lng) + " , " + str(self.max_lat) + " )" )
+                if data is not None:
+                    # 属性定義ファイルのバージョンを取得
+                    columns_version = data.get('version', '1')
+                    self.addMessage("[INFO]属性定義ファイルのバージョン: " + str(columns_version))
+                    temp = self.readTemplateFile(columns_version)
+                    # テンプレートファイルにdo_not_check_payload_filesがある場合は、ペイロードファイルのチェックを行わない
+                    if temp.get('do_not_check_payload_files') is not None:
+                        self.addMessage("[INFO]ペイロードファイルのチェックを行いません")
+                        continue
+                    if self.checkJsonFormat(data, temp) == False:
+                        # 属性定義がエラーの場合、GeoJSONのプロパティチェックができないので、次のファイルへ
+                        self.addMessage("[WARN]属性定義ファイルにエラーがあるため、地理空間ファイル: " + geofile + " のチェックをスキップします")
+                    else:
+                        # columns.jsonからpropertiesを作成
+                        propertys = self._convertColumns(data, temp.get('properties_value'))
+                        # 地理空間情報ファイルをチェックする
+                        self.addMessage("[INFO]地理空間ファイル: " + geofile + " をチェックします")
+                        self.geotype = 0
+                        data = self.loadJson(self.wrkPath() + geofile, 'utf-8')
+                        if data is not None:
+                            if not self.checkGeojson(data, propertys):
+                                self.result = False
+                        self.addMessage("[INFO]座標範囲: ( " + str(self.min_lng) + " , " + str(self.min_lat) + " )-( " + str(self.max_lng) + " , " + str(self.max_lat) + " )" )
+            # styleファイルのチェック
+            style_file = os.path.splitext(geofile)[0] + "_style.json"
+            # スタイルファイルが存在するか
+            if not os.path.exists(self.wrkPath() + style_file):
+                self.addMessage("[WARN]凡例ファイルがありません " + style_file)
+            else:
+                self.addMessage("[INFO]凡例ファイル: " + style_file + " をチェックします")
+                # テンプレートを読み込む
+                styletmp = self.loadJson(self.templatePath() + "temp_style.json", 'utf-8')
+                data = self.loadJson(self.wrkPath() + "/" + style_file, 'utf-8')
+                if data is not None:
+                    if not self.checkJsonFormat(data, styletmp):
+                        self.result = False
         return True
 
     # スタイルファイルのチェック
     def checkStyleFile(self):
         # テンプレートを読み込む
-        columns = self.loadJson(self.templatePath() + "temp_style.json", 'utf-8')
+        styletmp = self.loadJson(self.templatePath() + "temp_style.json", 'utf-8')
 
         # 地理空間情報ファイルのリストを取得
         for entry in self.entrys:
@@ -805,8 +814,7 @@ class Sip4dzipChecker:
             self.addMessage("[INFO]凡例ファイル: " + style_file + " をチェックします")
             data = self.loadJson(self.wrkPath() + "/" + style_file, 'utf-8')
             if data is not None:
-                return self.checkJsonFormat(data, columns)
-        
+                return self.checkJsonFormat(data, styletmp)
         return True
 
     # unzipする
@@ -863,7 +871,9 @@ class Sip4dzipChecker:
             # 展開したファイルをチェック
             if self.checkMetaFile():
                 if self.payload_type == "VECTOR":
-                    self.checkColumnsAndGeoDataFile_VECTOR()
+                    # GeoJSONとcolumns.jsonをチェック
+                    self.checkVector()
+                
             # 終了時刻を表示
             self.addMessage("[INFO]終了時刻: " + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
             # チェック結果
