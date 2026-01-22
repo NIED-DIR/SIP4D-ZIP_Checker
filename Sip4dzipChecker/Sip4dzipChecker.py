@@ -6,21 +6,64 @@ import datetime
 import zipfile
 import tempfile
 
+class GeoArea:
+    """
+    GeoArea クラス
+    """   
+    def __init__(self):
+        self.min_lng = 0.0
+        self.max_lng = 0.0
+        self.min_lat = 0.0
+        self.max_lat = 0.0
+
+    def reset(self):
+        self.min_lng = 0.0
+        self.max_lng = 0.0
+        self.min_lat = 0.0
+        self.max_lat = 0.0
+    
+    def set(self, lng:float, lat:float):
+        if self.min_lng == 0.0 and self.max_lng == 0.0 and self.min_lat == 0.0 and self.max_lat == 0.0:
+            self.min_lng = lng
+            self.max_lng = lng
+            self.min_lat = lat
+            self.max_lat = lat
+        else:
+            self.min_lng = min(self.min_lng, lng)
+            self.max_lng = max(self.max_lng, lng)
+            self.min_lat = min(self.min_lat, lat)
+            self.max_lat = max(self.max_lat, lat)
+
+    def add(self, ga:"GeoArea"):
+        if self.min_lng == 0.0 and self.max_lng == 0.0 and self.min_lat == 0.0 and self.max_lat == 0.0:
+            self.min_lng = ga.min_lng
+            self.max_lng = ga.max_lng
+            self.min_lat = ga.min_lat
+            self.max_lat = ga.max_lat
+        else:
+            self.min_lng = min(self.min_lng, ga.min_lng)
+            self.max_lng = max(self.max_lng, ga.max_lng)
+            self.min_lat = min(self.min_lat, ga.min_lat)
+            self.max_lat = max(self.max_lat, ga.max_lat)
+
+    def toString(self) -> str:
+        return "(" + str(self.min_lng) + "," + str(self.min_lat) + ") - (" + str(self.max_lng) + "," + str(self.max_lat) + ")"
+
+
+
 class Sip4dzipChecker:
     """
     SIP4D-ZIP Checker クラス
     """
     
     report_dir = ""                                 # レポート出力先ディレクトリ　空文字の場合は標準出力
-    multi_geometry = False                          # 複数のgeometry混在を許可するか
+    enable_multi_geometry = False                   # 複数のgeometry混在を許可するか
     template_root = './template'                    # テンプレートのルートディレクトリ
     # 以下リセット対象
     report = ""                                     # レポート
     tmp_dir = ""                                    # 一時ディレクトリ ここにSIP4D-ZIPを展開する
     filename = ""                                   # チェック対象のファイル名
     result = True                                   # チェック結果
-    geotype = 0                                     # geometryタイプ 0x01:Point 0x02:LineString 0x04:Polygon 0x08:MultiPoint 0x10:MultiLineString 0x20:MultiPolygon
-                                                    # 複数のgeometryが混在している場合、複数のビットが立つ
     version = ""                                    # sip4d_zip_meta.json に記載されているバージョン
     code = ""                                       # sip4d_zip_meta.json に記載されているコード
     payload_type = "VECTOR"                         # sip4d_zip_meta.json に記載されているペイロードタイプ　デフォルトはVECTOR
@@ -28,18 +71,16 @@ class Sip4dzipChecker:
     author = ""                                     # sip4d_zip_meta.json に記載されている著作者
     information_date = ""                           # sip4d_zip_meta.json に記載されている情報日時
     disaster_name = ""                              # sip4d_zip_meta.json に記載されている災害名
+    operation = ""                                  # sip4d_zip_meta.json に記載されている操作（通常/訓練/試験）
     entrys = []                                     # メタデータのエントリ
-    min_lng = 0.0                                   # 経度の最小値
-    max_lng = 0.0                                   # 経度の最大値
-    min_lat = 0.0                                   # 緯度の最小値
-    max_lat = 0.0                                   # 緯度の最大値
+    geoarea = GeoArea()                             # 空間情報の最小最大
     
     _properties_format = "^[a-z0-9_]+$"             # プロパティのフォーマット（小文字英数字とアンダースコアのみ）
     _datetime_format = "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+){0,1}[Z]{0,1}$"
 
     def __init__(self):
         self.report_dir = ""
-        self.multi_geometry = False
+        self.enable_multi_geometry = False
         self.template_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'template')
         self.reset()
 
@@ -48,7 +89,6 @@ class Sip4dzipChecker:
         self.tmp_dir = ""
         self.filename = ""
         self.result = True
-        self.geotype = 0
         self.version = ""
         self.code = ""
         self.payload_type = "VECTOR"
@@ -56,11 +96,9 @@ class Sip4dzipChecker:
         self.author = ""
         self.information_date = ""
         self.disaster_name = ""
+        self.operation = ""
         self.entrys = []
-        self.min_lng = 0.0
-        self.max_lng = 0.0
-        self.min_lat = 0.0
-        self.max_lat = 0.0
+        self.geoarea.reset()
 
     # メッセージを追加する
     def addMessage(self, message: str):
@@ -81,11 +119,7 @@ class Sip4dzipChecker:
 
     # 空間情報の初期化
     def initSpatial(self):
-        self.geotype = 0
-        self.min_lng = 0.0
-        self.max_lng = 0.0
-        self.min_lat = 0.0
-        self.max_lat = 0.0
+        self.geoarea.reset()
 
     #jsonファイルの読み込み
     def loadJson(self, filename: str, encoding='utf-8'):
@@ -110,6 +144,8 @@ class Sip4dzipChecker:
     #GeoJSONの形式チェック
     def checkGeojson(self, data: dict, temp: dict = None):
         ret = True
+        geoarea = GeoArea()
+        geotypes = []
         if data.get('type') is None:
             self.result = ret = False
             self.addMessage("[ERROR]GeoJSONの項目.typeがありません")
@@ -126,9 +162,9 @@ class Sip4dzipChecker:
         elif len(data['features']) == 0:
             self.addMessage("[INFO]Featuresが 0件です")
             return ret
+        # Feature番号のためのループカウント
         cnt = 0
         for feature in data['features']:
-            geotype = 0
             if feature['type'] != 'Feature':
                 self.result = ret = False
                 self.addMessage("[ERROR]features[" + str(cnt) + ".Featureではありません")
@@ -142,24 +178,10 @@ class Sip4dzipChecker:
                 self.result = ret = False
                 self.addMessage("[ERROR]features[" + str(cnt) + "].geometry.typeがありません")
             # ジオメトリタイプを記録する
-            if feature['geometry']['type'] == 'Point':
-                geotype = 0x01
-            elif feature['geometry']['type'] == 'LineString':
-                geotype = 0x02
-            elif feature['geometry']['type'] == 'Polygon':
-                geotype = 0x04
-            elif feature['geometry']['type'] == 'MultiPoint':
-                geotype = 0x08
-            elif feature['geometry']['type'] == 'MultiLineString':
-                geotype = 0x10
-            elif feature['geometry']['type'] == 'MultiPolygon':
-                geotype = 0x20
-            else:
-                self.result = ret = False
-                self.addMessage("[ERROR]不明なgeometry.typeです " + feature['geometry']['type'])
-        
-            self.geotype |= geotype
-            if not self._checkGeometry(feature['geometry']['coordinates'], geotype, cnt) :
+            if not feature['geometry']['type'] in geotypes:
+                geotypes.append(feature['geometry']['type'])
+
+            if not self._checkGeometry(feature['geometry']['coordinates'], feature['geometry']['type'], cnt, geoarea) :
                 # エラーの場合、該当する地物のプロパティをメッセージに追加する
                 self.addMessage(feature['properties'].__str__())
 
@@ -169,37 +191,30 @@ class Sip4dzipChecker:
             cnt += 1
 
         #複数のgeometryが混在していないかチェック
-        if not (self.geotype == 0x01 or self.geotype == 0x02 or self.geotype == 0x04 or \
-            self.geotype == 0x08 or self.geotype == 0x10 or self.geotype == 0x20) :
-            m = "複数のgeometry.typeが混在しています ("
-            if self.geotype & 0x01:
-                m += " Point"
-            if self.geotype & 0x02:
-                m += " LineString"
-            if self.geotype & 0x04:
-                m += " Polygon"
-            if self.geotype & 0x08:
-                m += " MultiPoint"
-            if self.geotype & 0x10:
-                m += " MultiLineString"
-            if self.geotype & 0x20:
-                m += " MultiPolygon"
-            m += " )"
-            if not self.multi_geometry:
+        if len(geotypes) == 0:
+            self.result = ret = False
+            self.addMessage("[ERROR]geometry.typeがありません") 
+        elif len(geotypes) > 1:
+            # geotypesをカンマ区切りの文字列にする
+            gtlist = ",".join(geotypes)
+            # ジオメトリ混在を許可しているか
+            if not self.enable_multi_geometry:
+                self.addMessage("[ERROR]複数のgeometry.typeが混在しています (" + gtlist + ")")
                 self.result = ret = False
-                self.addMessage("[ERROR]" + m)
             else:
-                self.addMessage("[INFO]" + m)    
-        
+                self.addMessage("[INFO]複数のgeometry.typeが混在しています (" + gtlist + ")")   
+        # 空間範囲の表示
+        self.addMessage("[INFO]空間範囲: " + geoarea.toString())
+        self.geoarea.add(geoarea)
         return ret
 
 
     #Geometryのデータをチェックする
-    def _checkGeometry(self, coordinates: dict, geotype: int, no: int):
+    def _checkGeometry(self, coordinates: dict, geotype: str, no: int, geoarea: GeoArea):
         # Multiかどうかの判定
-        if geotype & 0x38 == 0:
+        if not "Multi" in geotype :
             # シングルの場合
-            return self._checkCoordinate(coordinates, geotype, no)
+            return self._checkCoordinate(coordinates, geotype, no, geoarea)
         else:
             # マルチの場合
             if len(coordinates) == 0:
@@ -209,26 +224,26 @@ class Sip4dzipChecker:
             else:
                 ret = True
                 for coordinate in coordinates:
-                    if not self._checkCoordinate(coordinate, geotype, no) :
+                    if not self._checkCoordinate(coordinate, geotype, no, geoarea) :
                         ret = False
                 return ret
 
     #座標のデータをチェックする
-    def _checkCoordinate(self, coordinate: dict, geotype: int, no: int):
+    def _checkCoordinate(self, coordinate: dict, geotype: str, no: int, geoarea: GeoArea):
         # ポイントの場合
-        if geotype == 0x01 or geotype == 0x08:
-            return self._checkLatLng(coordinate, no)
+        if geotype == "Point" or geotype == "MultiPoint":
+            return self._checkLatLng(coordinate, geoarea, no)
         # ラインストリングの場合
-        if geotype == 0x02 or geotype == 0x10:
+        if geotype == "LineString" or geotype == "MultiLineString":
             if len(coordinate) < 2 :
                 self.result = False
                 self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates LineStringは2組以上の座標が必要です")
                 return False
             else:
                 for coord in coordinate:
-                    return self._checkLatLng(coord, no)
+                    return self._checkLatLng(coord, geoarea, no)
         # ポリゴンの場合
-        if geotype == 0x04 or geotype == 0x20:
+        if geotype == "Polygon" or geotype == "MultiPolygon":
             if len(coordinate) == 0:
                 self.result = False
                 self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates Polygonのジオメトリ座標が不正です")
@@ -240,7 +255,7 @@ class Sip4dzipChecker:
                     return False
                 else:
                     for coord in polygon:
-                        if not self._checkLatLng(coord, no):
+                        if not self._checkLatLng(coord, geoarea, no):
                             return False
                 # 最初の座標と最後の座標が同じかどうか
                 if polygon[0] != polygon[-1]:
@@ -254,7 +269,7 @@ class Sip4dzipChecker:
         return False
         
     #緯度経度のチェック（配列が２つで、float型であること）
-    def _checkLatLng(self, dat: any, no: int):
+    def _checkLatLng(self, dat: any, geoarea: GeoArea, no: int):
         if len(dat) != 2:
             self.result = False
             self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates 緯度経度が不正です " + dat.__str__())
@@ -263,20 +278,7 @@ class Sip4dzipChecker:
             self.result = False
             self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates 緯度経度が不正です " + dat.__str__())
             return False
-        if self.min_lat == 0.0 and self.max_lat == 0.0 and self.min_lng == 0.0 and self.max_lng == 0.0:
-            self.min_lng = dat[0]
-            self.max_lng = dat[0]
-            self.min_lat = dat[1]
-            self.max_lat = dat[1]
-        else:
-            if dat[0] < self.min_lng:
-                self.min_lng = dat[0]
-            if dat[0] > self.max_lng:
-                self.max_lng = dat[0]
-            if dat[1] < self.min_lat:
-                self.min_lat = dat[1]
-            if dat[1] > self.max_lat:
-                self.max_lat = dat[1]
+        geoarea.set(dat[0], dat[1])
         return True
 
 
@@ -675,7 +677,7 @@ class Sip4dzipChecker:
         # 初期チェックのテンプレートを読み込む
         columns = self.loadJson( str(self.template_root) + "/temp_meta.json", 'utf-8')
         if columns is None:
-            return False
+            raise Exception("テンプレートファイル temp_meta.json がありません")
 
         #　メタファイルが存在するか
         if not os.path.exists(self.wrkPath() + "sip4d_zip_meta.json"):
@@ -702,11 +704,7 @@ class Sip4dzipChecker:
         else:
             self.payload_type = "VECTOR"
         
-        #　バージョン別のテンプレートを読み込む
         self.addMessage("[INFO]メタデータファイルをチェックします sip4d_zip_meta.json")
-        columns = self.loadJson(self.templatePath() + "temp_meta.json", 'utf-8')
-        if columns is None:
-            return False
         # メタデータのフォーマットをチェック
         self.checkJsonFormat(data, columns)
         if data.get('title') is not None:
@@ -719,6 +717,8 @@ class Sip4dzipChecker:
         if data.get('disaster') is not None:
             if data['disaster'].get('name') is not None:
                 self.disaster_name = data['disaster']['name']
+        if data.get('testflg') is not None:
+            self.operation = data['testflg']
         # 基本情報を表示
         self.addMessage("[INFO]フォーマット: SIP4D-ZIP")
         self.addMessage("[INFO]バージョン: " + self.version)
@@ -728,6 +728,7 @@ class Sip4dzipChecker:
         self.addMessage("[INFO]タイトル：" + self.title)
         self.addMessage("[INFO]著作者：" + self.author)
         self.addMessage("[INFO]情報日時：" + self.information_date)
+        self.addMessage("[INFO]フラグ：" + self.operation)
 
         if self.result == False:
             self.addMessage("[WARN]メタデータファイルにエラーがあるため、以降のチェックをスキップします")
@@ -741,6 +742,11 @@ class Sip4dzipChecker:
             self.result = False
             self.addMessage("[ERROR]entry_numとファイル数が一致しません")
         
+        # Ver1, Ver1.1 はユニバーサルのみマルチレイヤ（エントリが複数）を許可する
+        if self.version == "1" or self.version == "1.1":
+            if len(data['entry']) > 1 and self.code != "99-999-99":
+                self.result = False
+                self.addMessage("[ERROR]情報種別コードが" + self.code + "の場合、マルチレイヤ（エントリが複数）を許可しません")       
         return True
 
 
@@ -781,7 +787,6 @@ class Sip4dzipChecker:
                         if data is not None:
                             if not self.checkGeojson(data, propertys):
                                 self.result = False
-                        self.addMessage("[INFO]座標範囲: ( " + str(self.min_lng) + " , " + str(self.min_lat) + " )-( " + str(self.max_lng) + " , " + str(self.max_lat) + " )" )
             # styleファイルのチェック
             style_file = os.path.splitext(geofile)[0] + "_style.json"
             # スタイルファイルが存在するか
@@ -795,6 +800,7 @@ class Sip4dzipChecker:
                 if data is not None:
                     if not self.checkJsonFormat(data, styletmp):
                         self.result = False
+        self.addMessage("[INFO]全エントリを合わせた空間範囲:" + self.geoarea.toString())
         return True
 
     # スタイルファイルのチェック

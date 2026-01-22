@@ -30,13 +30,14 @@ else:
         * checker.payload_type: ペイロードタイプ
         * checker.author: 作成者
         * checker.title: タイトル
-        * checker.min_lat: 最小緯度
-        * checker.min_lng: 最小経度
-        * checker.max_lat: 最大緯度
-        * checker.max_lng: 最大経度
+        * checker.geoarea.min_lat: 全エントリの空間範囲の最小緯度
+        * checker.geoarea.min_lng: 全エントリの空間範囲の最小経度
+        * checker.geoarea.max_lat: 全エントリの空間範囲の最大緯度
+        * checker.geoarea.max_lng: 全エントリの空間範囲の最大経度
         * checker.code : 情報種別コード
         * checker.information_date: 情報日時
         * checker.disaster_name: 災害名
+        * checker.operation: 運用フラグ（メタデータのtestflgの値）
 
 :warning: SIP4D-ZIPの仕様については、[災害情報共有のための共通データフレームワーク－SIP4D-ZIP](https://webdesk.jsa.or.jp/books/W11M0090/index/?bunsyo_id=JSA-S1016%3A2023)を参照してください。
 
