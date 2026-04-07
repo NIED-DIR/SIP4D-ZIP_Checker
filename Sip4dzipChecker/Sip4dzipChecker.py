@@ -705,6 +705,11 @@ class Sip4dzipChecker:
             self.payload_type = "VECTOR"
         
         self.addMessage("[INFO]メタデータファイルをチェックします sip4d_zip_meta.json")
+
+        columns = self.loadJson( self.templatePath() + "temp_meta.json", 'utf-8')
+        if columns is None:
+            raise Exception("テンプレートファイル temp_meta.json がありません")
+               
         # メタデータのフォーマットをチェック
         self.checkJsonFormat(data, columns)
         if data.get('title') is not None:

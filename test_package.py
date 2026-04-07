@@ -39,3 +39,8 @@ def test_6():
     ck = Sip4dzipChecker()
     # 複数のgeometryが混在している
     assert ck.check(os.path.abspath(_ROOT+"/Sip4dzipChecker/testdata/multi_geometry_type_err.zip")) == False
+
+def test_7():
+    ck = Sip4dzipChecker()
+    # ttidが空文字列
+    assert ck.check(os.path.abspath(_ROOT+"/Sip4dzipChecker/testdata/ttid_nashi.zip")) == False

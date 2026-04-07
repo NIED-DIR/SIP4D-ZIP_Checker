@@ -4,6 +4,6 @@ _ROOT = os.path.dirname(os.path.abspath(__file__))
 
 def test():
     ck = Sip4dzipChecker()
-    assert ck.check(os.path.abspath(_ROOT + "/testdata/multi_geometry_type_err.zip")) == False
+    assert ck.check(os.path.abspath(_ROOT + "/testdata/ttid_nashi.zip")) == False
 
 test()
