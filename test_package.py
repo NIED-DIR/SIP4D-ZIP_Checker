@@ -44,3 +44,8 @@ def test_7():
     ck = Sip4dzipChecker()
     # ttidが空文字列
     assert ck.check(os.path.abspath(_ROOT+"/Sip4dzipChecker/testdata/ttid_nashi.zip")) == False
+
+def test_8():
+    ck = Sip4dzipChecker()
+    # information_dateのフォーマットエラー
+    assert ck.check(os.path.abspath(_ROOT+"/Sip4dzipChecker/testdata/kunren_023_01-001-01_20260414140049_1.zip")) == False
