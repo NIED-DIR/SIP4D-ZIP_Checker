@@ -49,3 +49,8 @@ def test_8():
     ck = Sip4dzipChecker()
     # information_dateのフォーマットエラー
     assert ck.check(os.path.abspath(_ROOT+"/Sip4dzipChecker/testdata/kunren_023_01-001-01_20260414140049_1.zip")) == False
+
+def test_9():
+    ck = Sip4dzipChecker()
+    # propertiesのフォーマットエラー属性名(key)に大文字が含まれている
+    assert ck.check(os.path.abspath(_ROOT+"/Sip4dzipChecker/testdata/20260609111841_R_1003665_20251004.zip")) == False
