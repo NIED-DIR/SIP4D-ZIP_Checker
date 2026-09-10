@@ -59,3 +59,8 @@ def test_10():
     ck = Sip4dzipChecker()
     # ttidにZが含まれている
     assert ck.check(os.path.abspath(_ROOT+"/Sip4dzipChecker/testdata/0100902_style.zip")) == False
+
+def test_11():
+    ck = Sip4dzipChecker()
+    # columns.jsonのversionがint
+    assert ck.check(os.path.abspath(_ROOT+"/Sip4dzipChecker/testdata/errsample_columns_ver.zip")) == False

@@ -845,7 +845,7 @@ class Sip4dzipChecker:
     # テンプレートファイルの読み込み
     def readTemplateFile(self, columns_version: str):
         ret : dict
-        if os.path.exists(self.templatePath() + self.code + "." + columns_version + ".json"):
+        if os.path.exists(self.templatePath() + self.code + "." + str(columns_version) + ".json"):
             # 情報種別コードに対応する属性定義ファイルがある場合
             self.addMessage("[INFO]テンプレートファイル: " + self.code + "." + columns_version + ".json を読み込みます")
             ret = self.loadJson(self.templatePath() + self.code + "." + columns_version + ".json", 'utf-8')
