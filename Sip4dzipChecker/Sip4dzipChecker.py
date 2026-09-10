@@ -774,7 +774,7 @@ class Sip4dzipChecker:
                     # 属性定義ファイルのバージョンを取得
                     columns_version = data.get('version', '1')
                     self.addMessage("[INFO]属性定義ファイルのバージョン: " + str(columns_version))
-                    temp = self.readTemplateFile(columns_version)
+                    temp = self.readTemplateFile(str(columns_version))
                     # テンプレートファイルにdo_not_check_payload_filesがある場合は、ペイロードファイルのチェックを行わない
                     if temp.get('do_not_check_payload_files') is not None:
                         self.addMessage("[INFO]ペイロードファイルのチェックを行いません")
@@ -845,14 +845,18 @@ class Sip4dzipChecker:
     # テンプレートファイルの読み込み
     def readTemplateFile(self, columns_version: str):
         ret : dict
-        if os.path.exists(self.templatePath() + self.code + "." + str(columns_version) + ".json"):
+        # バージョン付き添付ファイル
+        tmp1 = f"{self.templatePath()}{self.code}.{columns_version}.json"
+        # バージョンなし添付ファイル
+        tmp2 = f"{self.templatePath()}{self.code}.json"
+        if os.path.exists(tmp1):
             # 情報種別コードに対応する属性定義ファイルがある場合
-            self.addMessage("[INFO]テンプレートファイル: " + self.code + "." + columns_version + ".json を読み込みます")
-            ret = self.loadJson(self.templatePath() + self.code + "." + columns_version + ".json", 'utf-8')
-        elif os.path.exists(self.templatePath() + self.code + ".json"):
+            self.addMessage(f"[INFO]テンプレートファイル: {tmp1} を読み込みます")
+            ret = self.loadJson(tmp1, 'utf-8')
+        elif os.path.exists(tmp2):
             # 情報種別コードに対応する属性定義ファイルがある場合
-            self.addMessage("[INFO]テンプレートファイル: " + self.code + ".json を読み込みます")
-            ret = self.loadJson(self.templatePath() + self.code + ".json", 'utf-8')
+            self.addMessage(f"[INFO]テンプレートファイル: {tmp2} を読み込みます")
+            ret = self.loadJson(tmp2, 'utf-8')
         else:
             # 汎用の属性定義ファイルを読み込む
             self.addMessage("[INFO]テンプレートファイル: temp_column.json を読み込みます")
