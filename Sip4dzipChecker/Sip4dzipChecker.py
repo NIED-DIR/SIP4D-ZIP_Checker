@@ -851,11 +851,11 @@ class Sip4dzipChecker:
         tmp2 = f"{self.templatePath()}{self.code}.json"
         if os.path.exists(tmp1):
             # 情報種別コードに対応する属性定義ファイルがある場合
-            self.addMessage(f"[INFO]テンプレートファイル: {tmp1} を読み込みます")
+            self.addMessage(f"[INFO]テンプレートファイル: {self.code}.{columns_version}.json を読み込みます")
             ret = self.loadJson(tmp1, 'utf-8')
         elif os.path.exists(tmp2):
             # 情報種別コードに対応する属性定義ファイルがある場合
-            self.addMessage(f"[INFO]テンプレートファイル: {tmp2} を読み込みます")
+            self.addMessage(f"[INFO]テンプレートファイル: {self.code}.json を読み込みます")
             ret = self.loadJson(tmp2, 'utf-8')
         else:
             # 汎用の属性定義ファイルを読み込む
