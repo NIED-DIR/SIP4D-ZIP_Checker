@@ -230,39 +230,48 @@ class Sip4dzipChecker:
 
     #座標のデータをチェックする
     def _checkCoordinate(self, coordinate: dict, geotype: str, no: int, geoarea: GeoArea):
-        # ポイントの場合
-        if geotype == "Point" or geotype == "MultiPoint":
-            return self._checkLatLng(coordinate, geoarea, no)
-        # ラインストリングの場合
-        if geotype == "LineString" or geotype == "MultiLineString":
-            if len(coordinate) < 2 :
-                self.result = False
-                self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates LineStringは2組以上の座標が必要です")
-                return False
-            else:
-                for coord in coordinate:
-                    return self._checkLatLng(coord, geoarea, no)
-        # ポリゴンの場合
-        if geotype == "Polygon" or geotype == "MultiPolygon":
-            if len(coordinate) == 0:
-                self.result = False
-                self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates Polygonのジオメトリ座標が不正です")
-                return False
-            for polygon in coordinate:
-                if len(polygon) < 4 :
+        try:
+            # ポイントの場合
+            if geotype == "Point" or geotype == "MultiPoint":
+                return self._checkLatLng(coordinate, geoarea, no)
+            # ラインストリングの場合
+            if geotype == "LineString" or geotype == "MultiLineString":
+                if len(coordinate) < 2 :
                     self.result = False
-                    self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates Polygonは4組以上の座標が必要です")
+                    self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates LineStringは2組以上の座標が必要です")
                     return False
                 else:
-                    for coord in polygon:
-                        if not self._checkLatLng(coord, geoarea, no):
-                            return False
-                # 最初の座標と最後の座標が同じかどうか
-                if polygon[0] != polygon[-1]:
+                    for coord in coordinate:
+                        return self._checkLatLng(coord, geoarea, no)
+            # ポリゴンの場合
+            if geotype == "Polygon" or geotype == "MultiPolygon":
+                if len(coordinate) == 0:
                     self.result = False
-                    self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates Polygonの最初の座標と最後の座標が異なります")
+                    self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates Polygonのジオメトリ座標が不正です")
                     return False
-            return True
+                for polygon in coordinate:
+                    if polygon is None:
+                        self.result = False
+                        self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates 座標が必要です")
+                        return False                   
+                    if len(polygon) < 4 :
+                        self.result = False
+                        self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates Polygonは4組以上の座標が必要です")
+                        return False
+                    else:
+                        for coord in polygon:
+                            if not self._checkLatLng(coord, geoarea, no):
+                                return False
+                    # 最初の座標と最後の座標が同じかどうか
+                    if polygon[0] != polygon[-1]:
+                        self.result = False
+                        self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates Polygonの最初の座標と最後の座標が異なります")
+                        return False
+                return True
+        except Exception as e:
+            self.result = False
+            self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates ジオメトリ座標が不正です")
+            return False            
         # 未定義
         self.result = False
         self.addMessage("[ERROR]features[" + str(no) + "].geometry.coordinates 不明なジオメトリタイプです")
@@ -608,7 +617,7 @@ class Sip4dzipChecker:
 
             elif x is int :
                 #typeチェック Integer, Number, StrNum, Bool
-                if not (column['type'] == 'Integer' or column['type'] == 'Number' or column['type'] == 'StrNum' or column['type'] == 'Bool'): 
+                if not (column['type'] == 'Integer' or column['type'] == 'Double' or column['type'] == 'Number' or column['type'] == 'StrNum' or column['type'] == 'Bool'): 
                     self.result = ret = False
                     self.addMessage("[ERROR]" + parent + "." + column['key'] + " の型が不正です " + column['type'] + "である必要があります")
                     # エラーの場合、該当する地物のプロパティをメッセージに追加する
